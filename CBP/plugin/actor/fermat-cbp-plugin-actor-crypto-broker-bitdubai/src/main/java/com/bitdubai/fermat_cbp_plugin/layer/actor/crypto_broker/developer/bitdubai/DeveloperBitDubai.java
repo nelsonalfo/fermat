@@ -1,21 +1,22 @@
-package com.bitdubai.fermat_cbp_plugin.layer.contract.customer_broker_sale.developer.bitdubai;
+package com.bitdubai.fermat_cbp_plugin.layer.actor.crypto_broker.developer.bitdubai;
 
 import com.bitdubai.fermat_api.Plugin;
 import com.bitdubai.fermat_api.PluginDeveloper;
 import com.bitdubai.fermat_api.layer.all_definition.enums.CryptoCurrency;
 import com.bitdubai.fermat_api.layer.all_definition.enums.TimeFrequency;
 import com.bitdubai.fermat_api.layer.all_definition.license.PluginLicensor;
-import com.bitdubai.fermat_cbp_plugin.layer.contract.customer_broker_sale.developer.bitdubai.version_1.CustomerBrokerContractSalePluginRoot;
+import com.bitdubai.fermat_cbp_plugin.layer.actor.crypto_broker.developer.bitdubai.version_1.CryptoBrokerActorPluginRoot;
 
 /**
- * Created by Angel on 16.09.15.
+ * Created by Angel on 28-11-2015.
  */
+
 public class DeveloperBitDubai implements PluginDeveloper, PluginLicensor {
 
-    Plugin plugin;
+    private final Plugin plugin;
 
-    public DeveloperBitDubai() {
-        plugin = new CustomerBrokerContractSalePluginRoot();
+    public DeveloperBitDubai(){
+        plugin = new CryptoBrokerActorPluginRoot();
     }
 
     @Override
@@ -30,16 +31,16 @@ public class DeveloperBitDubai implements PluginDeveloper, PluginLicensor {
 
     @Override
     public CryptoCurrency getCryptoCurrency() {
-        return null;
+        return CryptoCurrency.BITCOIN;
     }
 
     @Override
     public String getAddress() {
-        return null;
+        return "13gpMizSNvQCbJzAPyGCUnfUGqFD8ryzcv";
     }
 
     @Override
     public TimeFrequency getTimePeriod() {
-        return null;
+        return TimeFrequency.MONTHLY;
     }
 }
