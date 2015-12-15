@@ -136,32 +136,6 @@ public class CryptoTransmissionNetworkServicePluginRoot extends AbstractNetworkS
     static Map<String, LogLevel> newLoggingLevel = new HashMap<>();
 
 
-
-    /**
-     * Represent the platformComponentType
-     */
-    private PlatformComponentType platformComponentType;
-
-    /**
-     * Represent the networkServiceType
-     */
-    private NetworkServiceType networkServiceType;
-
-    /**
-     * Represent the name
-     */
-    private String name;
-
-    /**
-     * Represent the alias
-     */
-    private String alias;
-
-    /**
-     * Represent the extraData
-     */
-    private String extraData;
-
     @NeededAddonReference(platform = Platforms.PLUG_INS_PLATFORM   , layer = Layers.PLATFORM_SERVICE, addon = Addons.ERROR_MANAGER         )
     private ErrorManager errorManager;
 
@@ -209,10 +183,6 @@ public class CryptoTransmissionNetworkServicePluginRoot extends AbstractNetworkS
      */
     private ECCKeyPair identity;
 
-    /**
-     * Represent the register
-     */
-    private boolean register;
 
     /**
      * Represent the communicationRegistrationProcessNetworkServiceAgent
@@ -259,11 +229,6 @@ public class CryptoTransmissionNetworkServicePluginRoot extends AbstractNetworkS
                 EventSource.NETWORK_SERVICE_CRYPTO_TRANSMISSION
 
                 );
-        //TODO: sacar esta basura cuando funcione bien
-        this.networkServiceType    = NetworkServiceType.CRYPTO_TRANSMISSION;
-        this.name                  = "Crypto Transmission Network Service";
-        this.alias                 = "CryptoTransmissionNetworkService";
-        this.extraData             = null;
         this.remoteNetworkServicesRegisteredList = new CopyOnWriteArrayList<>();
         this.listenersAdded = new ArrayList<>();
     }
@@ -529,6 +494,7 @@ public class CryptoTransmissionNetworkServicePluginRoot extends AbstractNetworkS
              * Initialize the data base
              */
             initializeDb();
+            initializeCryptoTransmissionDb();
 
             /*
              * Initialize Developer Database Factory
@@ -571,8 +537,6 @@ public class CryptoTransmissionNetworkServicePluginRoot extends AbstractNetworkS
              * Its all ok, set the new status
             */
             this.serviceStatus = ServiceStatus.STARTED;
-
-
 
 
 
@@ -749,6 +713,7 @@ public class CryptoTransmissionNetworkServicePluginRoot extends AbstractNetworkS
              * Mark as register
              */
              this.register = Boolean.TRUE;
+            setRegister(Boolean.TRUE);
 
             System.out.print("-----------------------\n" +
                     "CRYPTO TRANSMISSION REGISTRADO  -----------------------\n" +
@@ -769,6 +734,8 @@ public class CryptoTransmissionNetworkServicePluginRoot extends AbstractNetworkS
                     identity,
                     eventManager
             );
+
+            setPlatformComponentProfilePluginRoot(platformComponentProfileRegistered);
 
             // Initialize messages handlers
             initializeMessagesListeners();
@@ -902,18 +869,22 @@ public class CryptoTransmissionNetworkServicePluginRoot extends AbstractNetworkS
     @Override
     public void handleVpnConnectionCloseNotificationEvent(FermatEvent fermatEvent) {
 
-        if(fermatEvent instanceof VPNConnectionCloseNotificationEvent){
+        System.out.println("CRYPTO TRANSMISSION - handleVpnConnectionCloseNotificationEvent");
+        VPNConnectionCloseNotificationEvent vpnConnectionCloseNotificationEvent = (VPNConnectionCloseNotificationEvent) fermatEvent;
+        cryptoTransmissionAgent.connectionFailure(vpnConnectionCloseNotificationEvent.getRemoteParticipant().getIdentityPublicKey());
 
-            VPNConnectionCloseNotificationEvent vpnConnectionCloseNotificationEvent = (VPNConnectionCloseNotificationEvent) fermatEvent;
-
-            if(vpnConnectionCloseNotificationEvent.getNetworkServiceApplicant() == getNetworkServiceType()){
-
-                if(communicationNetworkServiceConnectionManager != null)
-                     communicationNetworkServiceConnectionManager.closeConnection(vpnConnectionCloseNotificationEvent.getRemoteParticipant().getIdentityPublicKey());
-
-            }
-
-        }
+//        if(fermatEvent instanceof VPNConnectionCloseNotificationEvent){
+//
+//
+//
+//            if(vpnConnectionCloseNotificationEvent.getNetworkServiceApplicant() == getNetworkServiceType()){
+//
+//                if(communicationNetworkServiceConnectionManager != null)
+//                     communicationNetworkServiceConnectionManager.closeConnection(vpnConnectionCloseNotificationEvent.getRemoteParticipant().getIdentityPublicKey());
+//
+//            }
+//
+//        }
 
     }
 
@@ -924,6 +895,7 @@ public class CryptoTransmissionNetworkServicePluginRoot extends AbstractNetworkS
     @Override
     public void handleClientConnectionCloseNotificationEvent(FermatEvent fermatEvent) {
 
+        //TODO: esto lo comento porque cierra las conexiones, tiene que decirnos de quien es
         if(fermatEvent instanceof ClientConnectionCloseNotificationEvent){
             this.register = false;
 

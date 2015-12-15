@@ -265,6 +265,10 @@ public enum Plugins implements FermatPluginsEnum {
     TRANSACTION_TRANSMISSION    ("TRTX"),
     CLOSE_CONTRACT              ("CLC"),
     CUSTOMER_ONLINE_PAYMENT     ("CONP"),
+    CUSTOMER_OFFLINE_PAYMENT    ("COFP"),
+
+    CUSTOMER_BROKER_PURCHASE    ("CBPU"),
+    CUSTOMER_BROKER_SALE        ("CBSA"),
 
     // End  new Plugins
 
@@ -351,6 +355,8 @@ public enum Plugins implements FermatPluginsEnum {
             case ("CRRE"):  return CRYPTO_MONEY_RESTOCK     ;
             case ("CRDE"):  return CRYPTO_MONEY_DESTOCK     ;
             case "TRTX":    return TRANSACTION_TRANSMISSION ;
+            case "CBPU":    return CUSTOMER_BROKER_PURCHASE ;
+            case "CBSA":    return CUSTOMER_BROKER_SALE     ;
             case ("FI"):    return FIAT_INDEX               ;
             case "BBNKHMT": return BITDUBAI_BNK_HOLD_MONEY_TRANSACTION;
             case "BBNKUMT": return BITDUBAI_BNK_UNHOLD_MONEY_TRANSACTION;
@@ -372,7 +378,8 @@ public enum Plugins implements FermatPluginsEnum {
             case ("NGP"):   return NEGOTIATION_PURCHASE     ;
             case "OPC":     return OPEN_CONTRACT            ;
             case "CLC":     return CLOSE_CONTRACT           ;
-            case "CONP":     return CUSTOMER_ONLINE_PAYMENT ;
+            case "CONP":    return CUSTOMER_ONLINE_PAYMENT  ;
+            case "COFP":    return CUSTOMER_OFFLINE_PAYMENT ;
 
             case "BCNNODE"   : return BITDUBAI_COMMUNICATIONS_NETWORK_NODE;
             case "BCNCLIENT" : return BITDUBAI_COMMUNICATIONS_NETWORK_CLIENT;
