@@ -140,7 +140,7 @@ public class UnholdCashMoneyTransactionDao {
                 record.setLongValue(UnholdCashMoneyTransactionDatabaseConstants.UNHOLD_TIMESTAMP_CONFIRM_REJECT_COLUMN_NAME, (new Date().getTime() / 1000));
 
             DatabaseTable table = database.getTable(UnholdCashMoneyTransactionDatabaseConstants.UNHOLD_TABLE_NAME);
-            table.setStringFilter(UnholdCashMoneyTransactionDatabaseConstants.UNHOLD_TRANSACTION_ID_COLUMN_NAME, transactionId.toString(), DatabaseFilterType.EQUAL);
+            table.addStringFilter(UnholdCashMoneyTransactionDatabaseConstants.UNHOLD_TRANSACTION_ID_COLUMN_NAME, transactionId.toString(), DatabaseFilterType.EQUAL);
             table.updateRecord(record);
 
         } catch (CantUpdateRecordException e){
@@ -167,7 +167,7 @@ public class UnholdCashMoneyTransactionDao {
         List<DatabaseTableRecord> records;
         DatabaseTable table = database.getTable(UnholdCashMoneyTransactionDatabaseConstants.UNHOLD_TABLE_NAME);
 
-        table.setStringFilter(UnholdCashMoneyTransactionDatabaseConstants.UNHOLD_TRANSACTION_ID_COLUMN_NAME, transactionId.toString(), DatabaseFilterType.EQUAL);
+        table.addStringFilter(UnholdCashMoneyTransactionDatabaseConstants.UNHOLD_TRANSACTION_ID_COLUMN_NAME, transactionId.toString(), DatabaseFilterType.EQUAL);
         table.loadToMemory();
         records = table.getRecords();
 
@@ -182,7 +182,7 @@ public class UnholdCashMoneyTransactionDao {
         DatabaseTable table = this.database.getTable(UnholdCashMoneyTransactionDatabaseConstants.UNHOLD_TABLE_NAME);
 
         if (filter != null)
-            table.setStringFilter(filter.getColumn(), filter.getValue(), filter.getType());
+            table.addStringFilter(filter.getColumn(), filter.getValue(), filter.getType());
 
         table.loadToMemory();
         return table.getRecords();
@@ -195,7 +195,8 @@ public class UnholdCashMoneyTransactionDao {
         newRecord.setStringValue(UnholdCashMoneyTransactionDatabaseConstants.UNHOLD_WALLET_PUBLIC_KEY_COLUMN_NAME, unholdParameters.getPublicKeyWallet());
         newRecord.setStringValue(UnholdCashMoneyTransactionDatabaseConstants.UNHOLD_ACTOR_PUBLIC_KEY_COLUMN_NAME, unholdParameters.getPublicKeyActor());
         newRecord.setStringValue(UnholdCashMoneyTransactionDatabaseConstants.UNHOLD_PLUGIN_PUBLIC_KEY_COLUMN_NAME, unholdParameters.getPublicKeyPlugin());
-        newRecord.setDoubleValue(UnholdCashMoneyTransactionDatabaseConstants.UNHOLD_AMOUNT_COLUMN_NAME, unholdParameters.getAmount());
+        //TODO:Cambiar a BigDecimal
+        newRecord.setDoubleValue(UnholdCashMoneyTransactionDatabaseConstants.UNHOLD_AMOUNT_COLUMN_NAME, unholdParameters.getAmount().floatValue());
         newRecord.setStringValue(UnholdCashMoneyTransactionDatabaseConstants.UNHOLD_CURRENCY_COLUMN_NAME, unholdParameters.getCurrency().getCode());
         newRecord.setStringValue(UnholdCashMoneyTransactionDatabaseConstants.UNHOLD_MEMO_COLUMN_NAME, unholdParameters.getMemo());
         newRecord.setStringValue(UnholdCashMoneyTransactionDatabaseConstants.UNHOLD_STATUS_COLUMN_NAME, CashTransactionStatus.ACKNOWLEDGED.getCode());
