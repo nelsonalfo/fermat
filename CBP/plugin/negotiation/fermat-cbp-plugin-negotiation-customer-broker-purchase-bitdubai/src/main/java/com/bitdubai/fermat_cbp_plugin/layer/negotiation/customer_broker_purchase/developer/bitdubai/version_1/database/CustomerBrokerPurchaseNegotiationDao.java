@@ -94,6 +94,7 @@ public class CustomerBrokerPurchaseNegotiationDao implements NegotiationClauseMa
             recordToInsert.setStringValue(CustomerBrokerPurchaseNegotiationDatabaseConstants.NEGOTIATIONS_PURCHASE_CRYPTO_BROKER_PUBLIC_KEY_COLUMN_NAME, negotiation.getBrokerPublicKey());
             recordToInsert.setLongValue(CustomerBrokerPurchaseNegotiationDatabaseConstants.NEGOTIATIONS_PURCHASE_START_DATE_TIME_COLUMN_NAME, negotiation.getStartDate());
             recordToInsert.setStringValue(CustomerBrokerPurchaseNegotiationDatabaseConstants.NEGOTIATIONS_PURCHASE_CRYPTO_BROKER_PUBLIC_KEY_COLUMN_NAME, negotiation.getStatus().getCode());
+            recordToInsert.setIntegerValue(CustomerBrokerPurchaseNegotiationDatabaseConstants.NEGOTIATIONS_PURCHASE_NEAR_EXPIRATION_DATE_TIME_COLUMN_NAME, negotiation.getNearExpirationDatetime());
 
             PurchaseNegotiationTable.insertRecord(recordToInsert);
         } catch (CantInsertRecordException e) {
@@ -319,7 +320,8 @@ public class CustomerBrokerPurchaseNegotiationDao implements NegotiationClauseMa
             Long startDateTime,
             Long negotiationExpirationDate,
             NegotiationStatus statusNegotiation,
-            Collection<Clause> clauses
+            Collection<Clause> clauses,
+            Integer nearExpirationDatetime
     ){
         return new CustomerBrokerPurchaseNegotiationInformation(
                 negotiationId,
@@ -328,7 +330,8 @@ public class CustomerBrokerPurchaseNegotiationDao implements NegotiationClauseMa
                 startDateTime,
                 negotiationExpirationDate,
                 statusNegotiation,
-                clauses
+                clauses,
+                nearExpirationDatetime
         );
     }
 
@@ -337,11 +340,11 @@ public class CustomerBrokerPurchaseNegotiationDao implements NegotiationClauseMa
         String  publicKeyCustomer = record.getStringValue(CustomerBrokerPurchaseNegotiationDatabaseConstants.NEGOTIATIONS_PURCHASE_CRYPTO_CUSTOMER_PUBLIC_KEY_COLUMN_NAME);
         String  publicKeyBroker   = record.getStringValue(CustomerBrokerPurchaseNegotiationDatabaseConstants.NEGOTIATIONS_PURCHASE_CRYPTO_BROKER_PUBLIC_KEY_COLUMN_NAME);
         Long    startDataTime     = record.getLongValue(CustomerBrokerPurchaseNegotiationDatabaseConstants.NEGOTIATIONS_PURCHASE_START_DATE_TIME_COLUMN_NAME);
-
         Long    negotiationExpirationDate = record.getLongValue(CustomerBrokerPurchaseNegotiationDatabaseConstants.NEGOTIATIONS_PURCHASE_EXPIRATION_DATE_TIME_COLUMN_NAME);
+        Integer nearExpirationDatetime = record.getIntegerValue(CustomerBrokerPurchaseNegotiationDatabaseConstants.NEGOTIATIONS_PURCHASE_NEAR_EXPIRATION_DATE_TIME_COLUMN_NAME);
 
         NegotiationStatus  statusNegotiation = NegotiationStatus.getByCode(record.getStringValue(CustomerBrokerPurchaseNegotiationDatabaseConstants.NEGOTIATIONS_PURCHASE_CRYPTO_BROKER_PUBLIC_KEY_COLUMN_NAME));
-        return newCustomerBrokerPurchaseNegotiation(negotiationId, publicKeyCustomer, publicKeyBroker, startDataTime, negotiationExpirationDate, statusNegotiation, getClauses(negotiationId));
+        return newCustomerBrokerPurchaseNegotiation(negotiationId, publicKeyCustomer, publicKeyBroker, startDataTime, negotiationExpirationDate, statusNegotiation, getClauses(negotiationId), nearExpirationDatetime);
     }
 
     private CustomerBrokerPurchaseClause newCustomerBrokerPurchaseClause(
@@ -436,10 +439,6 @@ public class CustomerBrokerPurchaseNegotiationDao implements NegotiationClauseMa
         String  uri         = record.getStringValue(CustomerBrokerPurchaseNegotiationDatabaseConstants.LOCATIONS_CUSTOMER_URI_COLUMN_NAME);
         return new NegotiationPurchaseLocations(locationId, location, uri);
     }
-
-
-
-
 
     public void createNewBankAccount(NegotiationBankAccount bankAccount) throws CantCreateBankAccountPurchaseException {
         try {
