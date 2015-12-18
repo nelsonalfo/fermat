@@ -97,12 +97,17 @@ public class CustomerBrokerSaleNegotiationDao implements NegotiationClauseManage
                 DatabaseTable SaleNegotiationTable = this.database.getTable(CustomerBrokerSaleNegotiationDatabaseConstants.NEGOTIATIONS_SALE_TABLE_NAME);
                 DatabaseTableRecord recordToInsert = SaleNegotiationTable.getEmptyRecord();
 
+                Integer NearExpirationDatetime = 0;
+                if(negotiation.getNearExpirationDatetime()){
+                    NearExpirationDatetime = 1;
+                }
+
                 recordToInsert.setUUIDValue(CustomerBrokerSaleNegotiationDatabaseConstants.NEGOTIATIONS_SALE_NEGOTIATION_ID_COLUMN_NAME, negotiation.getNegotiationId());
                 recordToInsert.setStringValue(CustomerBrokerSaleNegotiationDatabaseConstants.NEGOTIATIONS_SALE_CRYPTO_CUSTOMER_PUBLIC_KEY_COLUMN_NAME, negotiation.getCustomerPublicKey());
                 recordToInsert.setStringValue(CustomerBrokerSaleNegotiationDatabaseConstants.NEGOTIATIONS_SALE_CRYPTO_BROKER_PUBLIC_KEY_COLUMN_NAME, negotiation.getBrokerPublicKey());
                 recordToInsert.setLongValue(CustomerBrokerSaleNegotiationDatabaseConstants.NEGOTIATIONS_SALE_START_DATE_TIME_COLUMN_NAME, negotiation.getStartDate());
                 recordToInsert.setStringValue(CustomerBrokerSaleNegotiationDatabaseConstants.NEGOTIATIONS_SALE_CRYPTO_BROKER_PUBLIC_KEY_COLUMN_NAME, negotiation.getStatus().getCode());
-                recordToInsert.setIntegerValue(CustomerBrokerSaleNegotiationDatabaseConstants.NEGOTIATIONS_SALE_NEAR_EXPIRATION_DATE_TIME_COLUMN_NAME, negotiation.getNearExpirationDatetime());
+                recordToInsert.setIntegerValue(CustomerBrokerSaleNegotiationDatabaseConstants.NEGOTIATIONS_SALE_NEAR_EXPIRATION_DATE_TIME_COLUMN_NAME, NearExpirationDatetime);
 
                 SaleNegotiationTable.insertRecord(recordToInsert);
             } catch (CantInsertRecordException e) {
@@ -329,7 +334,7 @@ public class CustomerBrokerSaleNegotiationDao implements NegotiationClauseManage
                 Long negotiationExpirationDate,
                 NegotiationStatus statusNegotiation,
                 Collection<Clause> clauses,
-                Integer nearExpirationDatetime
+                Boolean nearExpirationDatetime
         ){
             return new CustomerBrokerSaleNegotiationInformation(
                     negotiationId,
@@ -351,8 +356,13 @@ public class CustomerBrokerSaleNegotiationDao implements NegotiationClauseManage
             Long    negotiationExpirationDate = record.getLongValue(CustomerBrokerSaleNegotiationDatabaseConstants.NEGOTIATIONS_SALE_EXPIRATION_DATE_TIME_COLUMN_NAME);
             Integer nearExpirationDatetime = record.getIntegerValue(CustomerBrokerSaleNegotiationDatabaseConstants.NEGOTIATIONS_SALE_NEAR_EXPIRATION_DATE_TIME_COLUMN_NAME);
 
+            Boolean _NearExpirationDatetime = true;
+            if(nearExpirationDatetime == 0){
+                _NearExpirationDatetime = false;
+            }
+
             NegotiationStatus  statusNegotiation = NegotiationStatus.getByCode(record.getStringValue(CustomerBrokerSaleNegotiationDatabaseConstants.NEGOTIATIONS_SALE_CRYPTO_BROKER_PUBLIC_KEY_COLUMN_NAME));
-            return newCustomerBrokerSaleNegotiation(negotiationId, publicKeyCustomer, publicKeyBroker, startDataTime, negotiationExpirationDate, statusNegotiation, getClauses(negotiationId), nearExpirationDatetime);
+            return newCustomerBrokerSaleNegotiation(negotiationId, publicKeyCustomer, publicKeyBroker, startDataTime, negotiationExpirationDate, statusNegotiation, getClauses(negotiationId), _NearExpirationDatetime);
         }
 
         private CustomerBrokerSaleClause newCustomerBrokerSaleClause(
