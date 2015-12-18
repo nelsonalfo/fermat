@@ -1,14 +1,11 @@
 package com.bitdubai.fermat_cbp_api.layer.business_transaction.open_contract.interfaces;
 
 import com.bitdubai.fermat_api.layer.all_definition.crypto.util.CryptoHasher;
-import com.bitdubai.fermat_api.layer.all_definition.util.XMLParser;
-import com.bitdubai.fermat_cbp_api.all_definition.contract.Contract;
 import com.bitdubai.fermat_cbp_api.all_definition.contract.ContractClause;
 import com.bitdubai.fermat_cbp_api.all_definition.enums.ContractStatus;
 import com.bitdubai.fermat_cbp_api.all_definition.enums.CurrencyType;
 import com.bitdubai.fermat_cbp_api.all_definition.enums.ReferenceCurrency;
 import com.bitdubai.fermat_cbp_api.layer.contract.customer_broker_purchase.interfaces.CustomerBrokerContractPurchase;
-import com.bitdubai.fermat_cbp_api.layer.contract.customer_broker_sale.interfaces.CustomerBrokerContractSale;
 
 import java.util.Collection;
 
@@ -123,6 +120,12 @@ public class ContractPurchaseRecord implements CustomerBrokerContractPurchase {
     @Override
     public Collection<ContractClause> getContractClause() {
         return this.contractClauses;
+    }
+
+    @Override
+    public Integer getNearExpirationDatetime() {
+        // TODO: metodo para actualizar el nuevo campo en el contrato
+        return null;
     }
 
     public void setContractClauses(Collection<ContractClause> contractClauses){
