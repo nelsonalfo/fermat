@@ -78,6 +78,12 @@ public class CustomerBrokerContractSaleInformation implements CustomerBrokerCont
     }
 
     @Override
+    public Integer getNearExpirationDatetime() {
+        // TODO: metodo para actualizar el nuevo campo en el contrato
+        return null;
+    }
+
+    @Override
     public boolean equals(final Object o){
         if(!(o instanceof CustomerBrokerContractSale))
             return false;
