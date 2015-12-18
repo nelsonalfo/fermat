@@ -11,10 +11,8 @@ import java.util.Collection;
  */
 
 public class CustomerBrokerContractSaleInformation implements CustomerBrokerContractSale {
-
-    // TODO: Cambiar los numeros primos
-    private static final int HASH_PRIME_NUMBER_PRODUCT = 1117;
-    private static final int HASH_PRIME_NUMBER_ADD = 3001;
+    private static final int HASH_PRIME_NUMBER_PRODUCT = 2459;
+    private static final int HASH_PRIME_NUMBER_ADD = 4967;
 
     private final String contractID;
     private final String negotiationID;
@@ -24,14 +22,17 @@ public class CustomerBrokerContractSaleInformation implements CustomerBrokerCont
     private final ContractStatus status;
     private final Collection<ContractClause> clause;
 
+    private final Boolean nearExpirationDatetime;
+
     public CustomerBrokerContractSaleInformation(
             String contractID,
             String negotiationID,
             String publicKeyCustomer,
             String publicKeyBroker,
-            long dateTime,
+            Long dateTime,
             ContractStatus status,
-            Collection<ContractClause> clause
+            Collection<ContractClause> clause,
+            Boolean nearExpirationDatetime
     ){
         this.contractID = contractID;
         this.negotiationID = negotiationID;
@@ -40,6 +41,7 @@ public class CustomerBrokerContractSaleInformation implements CustomerBrokerCont
         this.dateTime = dateTime;
         this.status = status;
         this.clause = clause;
+        this.nearExpirationDatetime = nearExpirationDatetime;
     }
 
     @Override
@@ -78,9 +80,8 @@ public class CustomerBrokerContractSaleInformation implements CustomerBrokerCont
     }
 
     @Override
-    public Boolean getNearExpirationDatetime() {
-        // TODO: metodo para actualizar el nuevo campo en el contrato
-        return null;
+    public Boolean getNearExpirationDatetime(){
+        return this.nearExpirationDatetime;
     }
 
     @Override
@@ -103,7 +104,8 @@ public class CustomerBrokerContractSaleInformation implements CustomerBrokerCont
             return false;
         if(!this.clause.equals(compare.getContractClause()))
             return false;
-
+        if(!this.nearExpirationDatetime.equals(compare.getNearExpirationDatetime()))
+            return false;
         return true;
     }
 
@@ -117,6 +119,7 @@ public class CustomerBrokerContractSaleInformation implements CustomerBrokerCont
         c += dateTime.hashCode();
         c += status.hashCode();
         c += clause.hashCode();
+        c += nearExpirationDatetime.hashCode();
         return 	HASH_PRIME_NUMBER_PRODUCT * HASH_PRIME_NUMBER_ADD + c;
     }
 }
