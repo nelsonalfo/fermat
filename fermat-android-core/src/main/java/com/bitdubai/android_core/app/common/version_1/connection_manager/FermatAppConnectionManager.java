@@ -13,6 +13,7 @@ import com.bitdubai.fermat_dap_android_sub_app_asset_user_identity_bitdubai.app_
 import com.bitdubai.fermat_dap_android_sub_app_redeem_point_community_bitdubai.app_connection.CommunityRedeemPointFermatAppConnection;
 import com.bitdubai.fermat_dap_android_sub_app_redeem_point_identity_bitdubai.app_connection.RedeemPointFermatAppConnection;
 import com.bitdubai.reference_niche_wallet.bitcoin_wallet.app_connection.BitcoinWalletFermatAppConnection;
+import com.bitdubai.reference_wallet.cash_money_wallet.app_connection.CashMoneyWalletFermatAppConnection;
 import com.bitdubai.reference_wallet.crypto_broker_wallet.app_connection.CryptoBrokerWalletFermatAppConnection;
 import com.bitdubai.reference_wallet.crypto_customer_wallet.app_connection.CryptoCustomerWalletFermatAppConnection;
 import com.bitdubai.sub_app.crypto_broker_community.app_connection.CryptoBrokerCommunityFermatAppConnection;
@@ -29,7 +30,6 @@ public class FermatAppConnectionManager {
 
 
     public static AppConnections getFermatAppConnection(String publicKey, Activity activity, IntraUserLoginIdentity intraUserLoginIdentity) {
-
         switch (publicKey) {
             case "reference_wallet":
                 return new BitcoinWalletFermatAppConnection(activity,intraUserLoginIdentity);
@@ -61,8 +61,11 @@ public class FermatAppConnectionManager {
                 return new CryptoBrokerIdentityFermatAppConnection(activity);
             case "sub_app_crypto_customer_identity":
                 return new CryptoCustomerIdentityFermatAppConnection(activity);
+            case "cash_wallet":
+                return new CashMoneyWalletFermatAppConnection(activity, intraUserLoginIdentity);
         }
         return null;
+
     }
 
 
