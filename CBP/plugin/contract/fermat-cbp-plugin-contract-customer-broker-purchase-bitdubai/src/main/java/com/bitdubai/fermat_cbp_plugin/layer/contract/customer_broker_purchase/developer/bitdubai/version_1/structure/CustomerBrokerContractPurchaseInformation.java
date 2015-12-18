@@ -63,7 +63,7 @@ public class CustomerBrokerContractPurchaseInformation implements CustomerBroker
     }
 
     @Override
-    public long getDateTime() {
+    public Long getDateTime() {
         return this.dateTime;
     }
 
