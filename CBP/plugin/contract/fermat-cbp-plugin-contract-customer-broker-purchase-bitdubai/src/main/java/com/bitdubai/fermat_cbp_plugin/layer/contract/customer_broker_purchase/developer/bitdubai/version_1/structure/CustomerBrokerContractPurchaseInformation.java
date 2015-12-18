@@ -11,10 +11,8 @@ import java.util.Collection;
  */
 
 public class CustomerBrokerContractPurchaseInformation implements CustomerBrokerContractPurchase {
-
-    // TODO: Cambiar los numeros primos
-    private static final int HASH_PRIME_NUMBER_PRODUCT = 1117;
-    private static final int HASH_PRIME_NUMBER_ADD = 3001;
+    private static final int HASH_PRIME_NUMBER_PRODUCT = 1259;
+    private static final int HASH_PRIME_NUMBER_ADD = 6529;
 
     private final String contractID;
     private final String negotiationID;
@@ -24,14 +22,17 @@ public class CustomerBrokerContractPurchaseInformation implements CustomerBroker
     private final ContractStatus status;
     private final Collection<ContractClause> clause;
 
+    private final Boolean nearExpirationDatetime;
+
     public CustomerBrokerContractPurchaseInformation(
             String contractID,
             String negotiationID,
             String publicKeyCustomer,
             String publicKeyBroker,
-            long dateTime,
+            Long dateTime,
             ContractStatus status,
-            Collection<ContractClause> clause
+            Collection<ContractClause> clause,
+            Boolean nearExpirationDatetime
     ){
         this.contractID = contractID;
         this.negotiationID = negotiationID;
@@ -40,6 +41,7 @@ public class CustomerBrokerContractPurchaseInformation implements CustomerBroker
         this.dateTime = dateTime;
         this.status = status;
         this.clause = clause;
+        this.nearExpirationDatetime = nearExpirationDatetime;
     }
 
     @Override
@@ -79,8 +81,7 @@ public class CustomerBrokerContractPurchaseInformation implements CustomerBroker
 
     @Override
     public Boolean getNearExpirationDatetime() {
-        // TODO: metodo para actualizar el nuevo campo en el contrato
-        return null;
+        return this.nearExpirationDatetime;
     }
 
     @Override
