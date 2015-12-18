@@ -17,13 +17,6 @@ public interface IntraWalletUserIdentity extends ActiveIdentity{
     String getAlias();
 
     /**
-     * The method <code>getPhrase</code> returns the phrase created by the intra user
-     * @return string phrase object
-     */
-
-    String getPhrase();
-
-    /**
      * The method <code>getPublicKey</code> returns the public key of the represented intra user
      * @return the public key of the represented intra user
      */

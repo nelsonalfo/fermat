@@ -287,8 +287,6 @@ public class AssetIssuerActorPluginRoot extends AbstractPlugin implements
         //TODO ENVIO DE PUBLICK KEY EXTENDED GENERADA PARA A.N.S Redeem Point
         AssetExtendedPublickKeyContentMessage assetExtendedPublickKeyContentMessage = new AssetExtendedPublickKeyContentMessage();
 
-        //todo Rodrigo obtener Extended Public Key de Asset Vault y meter dentro de AssetExtendedPublickKeyContentMessage
-
         try {
             DAPMessage dapMessageSend = new DAPMessage(
                     DAPMessageType.EXTENDED_PUBLIC_KEY,

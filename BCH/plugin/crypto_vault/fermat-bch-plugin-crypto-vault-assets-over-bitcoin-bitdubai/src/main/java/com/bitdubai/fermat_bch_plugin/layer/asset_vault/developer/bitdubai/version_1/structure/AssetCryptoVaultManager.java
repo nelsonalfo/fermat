@@ -1,7 +1,5 @@
 package com.bitdubai.fermat_bch_plugin.layer.asset_vault.developer.bitdubai.version_1.structure;
 
-import com.bitdubai.fermat_api.CantStartAgentException;
-import com.bitdubai.fermat_api.layer.all_definition.enums.VaultType;
 import com.bitdubai.fermat_api.layer.all_definition.money.CryptoAddress;
 import com.bitdubai.fermat_api.layer.osa_android.database_system.PluginDatabaseSystem;
 import com.bitdubai.fermat_api.layer.osa_android.file_system.PluginFileSystem;
@@ -9,15 +7,11 @@ import com.bitdubai.fermat_api.layer.all_definition.enums.BlockchainNetworkType;
 import com.bitdubai.fermat_bch_api.layer.crypto_network.bitcoin.BitcoinNetworkSelector;
 import com.bitdubai.fermat_bch_api.layer.crypto_network.bitcoin.exceptions.CantBroadcastTransactionException;
 import com.bitdubai.fermat_bch_api.layer.crypto_network.bitcoin.interfaces.BitcoinNetworkManager;
-import com.bitdubai.fermat_bch_api.layer.crypto_vault.asset_vault.exceptions.CantGetExtendedPublicKeyException;
 import com.bitdubai.fermat_bch_api.layer.crypto_vault.asset_vault.exceptions.CantSendAssetBitcoinsToUserException;
-import com.bitdubai.fermat_bch_api.layer.crypto_vault.classes.HierarchyAccount.*;
-import com.bitdubai.fermat_bch_api.layer.crypto_vault.exceptions.CantAddHierarchyAccountException;
-import com.bitdubai.fermat_bch_api.layer.crypto_vault.exceptions.CantDeriveNewKeysException;
 import com.bitdubai.fermat_bch_api.layer.crypto_vault.exceptions.GetNewCryptoAddressException;
-import com.bitdubai.fermat_bch_api.layer.crypto_vault.classes.vault_seed.VaultSeedGenerator;
-import com.bitdubai.fermat_bch_api.layer.crypto_vault.classes.vault_seed.exceptions.CantCreateAssetVaultSeed;
-import com.bitdubai.fermat_bch_api.layer.crypto_vault.classes.vault_seed.exceptions.CantLoadExistingVaultSeed;
+import com.bitdubai.fermat_bch_api.layer.crypto_vault.vault_seed.VaultSeedGenerator;
+import com.bitdubai.fermat_bch_api.layer.crypto_vault.vault_seed.exceptions.CantCreateAssetVaultSeed;
+import com.bitdubai.fermat_bch_api.layer.crypto_vault.vault_seed.exceptions.CantLoadExistingVaultSeed;
 import com.bitdubai.fermat_bch_plugin.layer.asset_vault.developer.bitdubai.version_1.database.AssetsOverBitcoinCryptoVaultDao;
 import com.bitdubai.fermat_bch_plugin.layer.asset_vault.developer.bitdubai.version_1.exceptions.CantExecuteDatabaseOperationException;
 import com.bitdubai.fermat_bch_plugin.layer.asset_vault.developer.bitdubai.version_1.exceptions.CantInitializeAssetsOverBitcoinCryptoVaultDatabaseException;
@@ -29,12 +23,8 @@ import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.InsufficientMoneyException;
 import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.Transaction;
-import org.bitcoinj.core.TransactionInput;
 import org.bitcoinj.core.Wallet;
-import org.bitcoinj.crypto.DeterministicKey;
-import org.bitcoinj.crypto.HDKeyDerivation;
 import org.bitcoinj.crypto.MnemonicException;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.bitcoinj.wallet.WalletTransaction;
@@ -144,7 +134,7 @@ public class AssetCryptoVaultManager  {
          * I create the account manually instead of getting it from the database because this method always returns addresses
          * from the asset vault account with Id 0.
          */
-        com.bitdubai.fermat_bch_api.layer.crypto_vault.classes.HierarchyAccount.HierarchyAccount vaultAccount = new com.bitdubai.fermat_bch_api.layer.crypto_vault.classes.HierarchyAccount.HierarchyAccount(0, "Asset Vault account", HierarchyAccountType.MASTER_ACCOUNT);
+        HierarchyAccount vaultAccount = new HierarchyAccount(0, "Asset Vault");
         return vaultKeyHierarchyGenerator.getVaultKeyHierarchy().getBitcoinAddress(blockchainNetworkType, vaultAccount);
     }
 
@@ -172,29 +162,13 @@ public class AssetCryptoVaultManager  {
         /**
          * I will get the genesis transaction  I will use to form the input from the CryptoNetwork
          */
-        Transaction genesisTransaction = bitcoinNetworkManager.getBitcoinTransaction(networkType, genesisTransactionId);
-
+        final Transaction genesisTransaction = bitcoinNetworkManager.getBitcoinTransaction(networkType, genesisTransactionId);
         if (genesisTransaction  == null){
-            /**
-             * Transaction might be null because we are sending from the user to appropiate or redeem an asset, and we don't have the GenesisTransaction
-             * stored in our wallet. If this is the case I will find a child that uses the GenesisTransaction as an input and use the child transaction
-             * to send the bitcoins.
-             */
-            List<Transaction> transactions = bitcoinNetworkManager.getBitcoinTransaction(networkType, VaultType.CRYPTO_ASSET_VAULT);
-            for (Transaction transaction : transactions){
-                for (TransactionInput input : transaction.getInputs()){
-                    if (input.getOutpoint().getHash().toString().contentEquals(genesisTransactionId))
-                        genesisTransaction = transaction;
-                }
-            }
-
-            if (genesisTransaction  == null){
-                StringBuilder output = new StringBuilder("The specified transaction hash ");
-                output.append(genesisTransactionId);
-                output.append(System.lineSeparator());
-                output.append("doesn't exists in the CryptoNetwork.");
-                throw new CantSendAssetBitcoinsToUserException(CantSendAssetBitcoinsToUserException.DEFAULT_MESSAGE, null, output.toString(), null);
-            }
+            StringBuilder output = new StringBuilder("The specified transaction hash ");
+            output.append(genesisTransactionId);
+            output.append(System.lineSeparator());
+            output.append("doesn't exists in the CryptoNetwork.");
+            throw new CantSendAssetBitcoinsToUserException(CantSendAssetBitcoinsToUserException.DEFAULT_MESSAGE, null, output.toString(), null);
         }
 
 
@@ -212,7 +186,7 @@ public class AssetCryptoVaultManager  {
         /**
          * Create the bitcoinj wallet from the keys of this account
          */
-        com.bitdubai.fermat_bch_api.layer.crypto_vault.classes.HierarchyAccount.HierarchyAccount vaultAccount = new com.bitdubai.fermat_bch_api.layer.crypto_vault.classes.HierarchyAccount.HierarchyAccount(0, "Asset Vault account", HierarchyAccountType.MASTER_ACCOUNT);
+        HierarchyAccount vaultAccount = new HierarchyAccount(0, "Asset Vault");
         final Wallet wallet = getWalletForAccount(vaultAccount, networkParameters);
 
         /**
@@ -222,11 +196,10 @@ public class AssetCryptoVaultManager  {
         wallet.addWalletTransaction(walletTransaction);
 
         /**
-         * Calculates the amount to be sent by removing the fee from the available balance.
-         * I'm ignoring the GenesisAmount passed because this might not be the right value.
+         * Calculates the amount to be sent by removing the fee from the passed value.
          */
         Coin fee = Coin.valueOf(10000);
-        final Coin coinToSend = wallet.getBalance().subtract(fee);
+        final Coin coinToSend = Coin.valueOf(amount).subtract(fee);
 
         /**
          * creates the send request and broadcast it on the network.
@@ -265,7 +238,7 @@ public class AssetCryptoVaultManager  {
      * @param networkParameters
      * @return
      */
-    private Wallet getWalletForAccount(com.bitdubai.fermat_bch_api.layer.crypto_vault.classes.HierarchyAccount.HierarchyAccount vaultAccount, NetworkParameters networkParameters) {
+    private Wallet getWalletForAccount(HierarchyAccount vaultAccount, NetworkParameters networkParameters) {
         List<ECKey> derivedKeys = vaultKeyHierarchyGenerator.getVaultKeyHierarchy().getDerivedKeys(vaultAccount);
         Wallet wallet = Wallet.fromKeys(networkParameters, derivedKeys);
         return wallet;
@@ -286,7 +259,7 @@ public class AssetCryptoVaultManager  {
      * Gets the next available key from the specified account.
      * @return
      */
-    private ECKey getNextAvailableECKey(com.bitdubai.fermat_bch_api.layer.crypto_vault.classes.HierarchyAccount.HierarchyAccount hierarchyAccount) throws CantExecuteDatabaseOperationException {
+    private ECKey getNextAvailableECKey(HierarchyAccount hierarchyAccount) throws CantExecuteDatabaseOperationException {
         ECKey ecKey = vaultKeyHierarchyGenerator.getVaultKeyHierarchy().getNextAvailableKey(hierarchyAccount);
         return ecKey;
     }
@@ -365,97 +338,5 @@ public class AssetCryptoVaultManager  {
         }
 
         return dao;
-    }
-
-    /**
-     * Gets the amount of unused keys that are available from the passed account.
-     * @param  account the hierarchy account to get the keys from
-     * @return
-     */
-    public int getAvailableKeyCount(com.bitdubai.fermat_bch_api.layer.crypto_vault.classes.HierarchyAccount.HierarchyAccount account){
-        //todo implement: I will use this to validate when new assets are created in the factory the amount of available keys.
-        // if the amount of keys is less than the amount of assets to create, then I will invoke deriveKeys
-        return 0;
-    }
-
-
-    /**
-     * Derives the specified amount of keys in the selected account. Only some plugins can execute this method.
-     * @param pluginId the pluginId invoking this call. Might not have permissions to create new keys.
-     * @param account the account to derive keys from.
-     * @param keysToDerive thre amount of keys to derive.
-     * @throws CantDeriveNewKeysException
-     */
-    public void deriveKeys(UUID pluginId, com.bitdubai.fermat_bch_api.layer.crypto_vault.classes.HierarchyAccount.HierarchyAccount account, int keysToDerive) throws CantDeriveNewKeysException{
-        //todo implement when creating assets, If I create more assets than available keys, then first I need to generate new keys.
-    }
-
-    /**
-     * * Creates a new hierarchy Account in the vault.
-     * This will create the sets of keys and start monitoring the default network with these keys.
-     * @param description
-     * @param hierarchyAccountType
-     * @return
-     * @throws CantAddHierarchyAccountException
-     */
-    public HierarchyAccount addHierarchyAccount(String description, HierarchyAccountType hierarchyAccountType) throws CantAddHierarchyAccountException {
-        /**
-         * I will insert the record in the database. First I will get the next Id available from the database
-         */
-        int hierarchyAccountID;
-        try {
-            hierarchyAccountID = getDao().getNextAvailableHierarchyAccountId();
-        } catch (CantExecuteDatabaseOperationException e) {
-            throw new CantAddHierarchyAccountException(CantAddHierarchyAccountException.DEFAULT_MESSAGE, e, "Can't get next available Id from the database.", "database issue");
-        }
-
-        /**
-         * I create the HierarchyAccount and add it to the database.
-         */
-        HierarchyAccount hierarchyAccount = new HierarchyAccount(hierarchyAccountID, description, hierarchyAccountType);
-
-        try {
-            this.getDao().addNewHierarchyAccount(hierarchyAccount);
-        } catch (CantExecuteDatabaseOperationException e) {
-            throw new CantAddHierarchyAccountException(CantAddHierarchyAccountException.DEFAULT_MESSAGE, e, "Can't insert the next Hierarchy in the database.", "database issue");
-        }
-
-        /**
-         * Restart the Hierarchy Maintainer so that it loads the new added Hierarchy Account and start the monitoring.
-         */
-        this.vaultKeyHierarchyGenerator.vaultKeyHierarchyMaintainer.stop();
-        try {
-            this.vaultKeyHierarchyGenerator.vaultKeyHierarchyMaintainer.start();
-        } catch (CantStartAgentException e) {
-            e.printStackTrace();
-        }
-
-        return hierarchyAccount;
-    }
-
-    /**
-     * Gets the Extended Public Key from the specified account. Can't be from a master account.
-     * @param hierarchyAccount a Redeem Point account.
-     * @return the DeterministicKey that will be used by the redeem Points.
-     * @throws CantGetExtendedPublicKeyException
-     */
-    public DeterministicKey getExtendedPublicKey(HierarchyAccount hierarchyAccount) throws CantGetExtendedPublicKeyException {
-        /**
-         * get the master account key
-         */
-        DeterministicKey accountMasterKey = this.vaultKeyHierarchyGenerator.getVaultKeyHierarchy().getAddressKeyFromAccount(hierarchyAccount);
-
-        // Serialize the pub key.
-        byte[] pubKeyBytes = accountMasterKey.getPubKey();
-        byte[] chainCode = accountMasterKey.getChainCode();
-
-
-        // Deserialize the pub key.
-        final DeterministicKey watchPubKeyAccountZero = HDKeyDerivation.createMasterPubKeyFromBytes(pubKeyBytes, chainCode);
-
-        /**
-         * return the extended public Key
-         */
-        return watchPubKeyAccountZero;
     }
 }

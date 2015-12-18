@@ -146,13 +146,10 @@ public class IntraWalletUserActorDao {
             throw new CantAddPendingIntraWalletUserException("CAN'T INSERT INTRA USER", e, "", "Cant create new intra user, insert database problems.");
 
 
-        } catch (CantPersistProfileImageException e) {
-            throw new CantAddPendingIntraWalletUserException("CAN'T INSERT INTRA USER", e, "", "Cant Persist Profile Image.");
-
-        } catch (CantCreateNewDeveloperException e) {
-            throw new CantAddPendingIntraWalletUserException("CAN'T INSERT INTRA USER", e, "", "Cant get if intra user exist.");
+        } catch (Exception e) {
+            // Failure unknown.
+            throw new CantAddPendingIntraWalletUserException("CAN'T INSERT INTRA USER", FermatException.wrapException(e), "", "Cant create new intra user, unknown failure.");
         }
-
 
 
     }

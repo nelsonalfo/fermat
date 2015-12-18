@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -21,8 +20,8 @@ import com.bitdubai.fermat_api.layer.dmp_engine.sub_app_runtime.enums.SubApps;
 import com.bitdubai.fermat_cbp_api.layer.sub_app_module.crypto_customer_identity.exceptions.CantGetCryptoCustomerListException;
 import com.bitdubai.fermat_cbp_api.layer.sub_app_module.crypto_customer_identity.interfaces.CryptoCustomerIdentityInformation;
 import com.bitdubai.fermat_cbp_api.layer.sub_app_module.crypto_customer_identity.interfaces.CryptoCustomerIdentityModuleManager;
-import com.bitdubai.fermat_pip_api.layer.platform_service.error_manager.enums.UnexpectedSubAppExceptionSeverity;
 import com.bitdubai.fermat_pip_api.layer.platform_service.error_manager.interfaces.ErrorManager;
+import com.bitdubai.fermat_pip_api.layer.platform_service.error_manager.enums.UnexpectedSubAppExceptionSeverity;
 import com.bitdubai.sub_app.crypto_customer_identity.R;
 import com.bitdubai.sub_app.crypto_customer_identity.common.adapters.CryptoCustomerIdentityInfoAdapter;
 import com.bitdubai.sub_app.crypto_customer_identity.session.CryptoCustomerIdentitySubAppSession;
@@ -40,9 +39,6 @@ import static com.bitdubai.sub_app.crypto_customer_identity.session.CryptoCustom
  */
 public class CryptoCustomerIdentityListFragment extends FermatListFragment<CryptoCustomerIdentityInformation>
         implements FermatListItemListeners<CryptoCustomerIdentityInformation>, SearchView.OnQueryTextListener, SearchView.OnCloseListener {
-
-    // Constants
-    private static final String TAG = "CustomerIdentityList";
 
     // Fermat Managers
     private CryptoCustomerIdentityModuleManager moduleManager;
@@ -70,7 +66,7 @@ public class CryptoCustomerIdentityListFragment extends FermatListFragment<Crypt
             errorManager = appSession.getErrorManager();
             identityInformationList = (ArrayList) getMoreDataAsync(FermatRefreshTypes.NEW, 0);
         } catch (Exception ex) {
-            Log.e(TAG, ex.getMessage(), ex);
+            CommonLogger.exception(TAG, ex.getMessage(), ex);
 
             if (errorManager != null) {
                 errorManager.reportUnexpectedSubAppException(
@@ -103,7 +99,7 @@ public class CryptoCustomerIdentityListFragment extends FermatListFragment<Crypt
         newIdentityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeActivity(Activities.CBP_SUB_APP_CRYPTO_CUSTOMER_IDENTITY_CREATE_IDENTITY.getCode(), appSession.getAppPublicKey());
+               changeActivity(Activities.CBP_SUB_APP_CRYPTO_CUSTOMER_IDENTITY_CREATE_IDENTITY.getCode(), appSession.getAppPublicKey());
             }
         });
 
@@ -162,6 +158,7 @@ public class CryptoCustomerIdentityListFragment extends FermatListFragment<Crypt
     }
 
 
+
     @Override
     public List<CryptoCustomerIdentityInformation> getMoreDataAsync(FermatRefreshTypes refreshType, int pos) {
         List<CryptoCustomerIdentityInformation> data = new ArrayList<>();
@@ -169,13 +166,10 @@ public class CryptoCustomerIdentityListFragment extends FermatListFragment<Crypt
         try {
             data = moduleManager.getAllCryptoCustomersIdentities(0, 0);
         } catch (CantGetCryptoCustomerListException ex) {
-            Log.e(TAG, ex.getMessage(), ex);
-            if (errorManager != null) {
-                errorManager.reportUnexpectedSubAppException(
-                        SubApps.CBP_CRYPTO_CUSTOMER_IDENTITY,
-                        UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT,
-                        ex);
-            }
+            errorManager.reportUnexpectedSubAppException(
+                    SubApps.CBP_CRYPTO_CUSTOMER_IDENTITY,
+                    UnexpectedSubAppExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_FRAGMENT,
+                    ex);
         }
 
         return data;

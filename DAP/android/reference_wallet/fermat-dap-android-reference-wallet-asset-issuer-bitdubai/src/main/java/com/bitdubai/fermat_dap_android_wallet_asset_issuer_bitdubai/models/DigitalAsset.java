@@ -2,9 +2,7 @@ package com.bitdubai.fermat_dap_android_wallet_asset_issuer_bitdubai.models;
 
 import com.bitdubai.fermat_dap_api.layer.dap_actor.asset_user.interfaces.ActorAssetUser;
 
-import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,14 +15,13 @@ public class DigitalAsset {
 
     private String name;
     private String amount;
-    private Long availableBalanceQuantity;
-    private Long bookBalanceQuantity;
     private Long availableBalance;
-    private Timestamp expDate;
+    private Long bookBalance;
+    private Double bitcoinAmount;
+    private Date expDate;
     private String walletPublicKey;
     private String assetPublicKey;
     private ActorAssetUser actorAssetUser;
-    private byte[] image;
 
     public DigitalAsset() {
     }
@@ -87,37 +84,28 @@ public class DigitalAsset {
         this.actorAssetUser = actorAssetUser;
     }
 
-    public Long getAvailableBalanceQuantity() {
-        return availableBalanceQuantity;
-    }
-
-    public void setAvailableBalanceQuantity(Long availableBalanceQuantity) {
-        this.availableBalanceQuantity = availableBalanceQuantity;
-    }
-
-    public Long getBookBalanceQuantity() {
-        return bookBalanceQuantity;
-    }
-
-    public void setBookBalanceQuantity(Long bookBalanceQuantity) {
-        this.bookBalanceQuantity = bookBalanceQuantity;
+    public Long getAvailableBalance() {
+        return availableBalance;
     }
 
     public void setAvailableBalance(Long availableBalance) {
         this.availableBalance = availableBalance;
     }
 
-    public Long getAvailableBalance() {
-        return availableBalance;
+    public Long getBookBalance() {
+        return bookBalance;
     }
 
-    public Double getAvailableBalanceBitcoin() {
-        return Double.valueOf(availableBalance) / 1000000;
+    public void setBookBalance(Long bookBalance) {
+        this.bookBalance = bookBalance;
     }
 
-    public String getFormattedAvailableBalanceBitcoin() {
-        DecimalFormat df = new DecimalFormat("0.000000");
-        return df.format(getAvailableBalanceBitcoin());
+    public Double getBitcoinAmount() {
+        return bitcoinAmount;
+    }
+
+    public void setBitcoinAmount(Double bitcoinAmount) {
+        this.bitcoinAmount = bitcoinAmount;
     }
 
     public Date getExpDate() {
@@ -129,15 +117,7 @@ public class DigitalAsset {
         return df.format(expDate);
     }
 
-    public void setExpDate(Timestamp expDate) {
+    public void setExpDate(Date expDate) {
         this.expDate = expDate;
-    }
-
-    public byte[] getImage() {
-        return image;
-    }
-
-    public void setImage(byte[] image) {
-        this.image = image;
     }
 }

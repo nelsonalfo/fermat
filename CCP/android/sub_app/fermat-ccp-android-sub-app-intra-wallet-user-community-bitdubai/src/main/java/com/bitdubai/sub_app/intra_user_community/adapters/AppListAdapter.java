@@ -8,12 +8,12 @@ import android.view.View;
 import com.bitdubai.fermat_android_api.ui.adapters.FermatAdapter;
 import com.bitdubai.fermat_ccp_api.layer.module.intra_user.interfaces.IntraUserInformation;
 import com.bitdubai.sub_app.intra_user_community.R;
-import com.bitdubai.sub_app.intra_user_community.holders.AppWorldHolder;
+import com.bitdubai.sub_app.intra_user_community.holders.IntraUserInformationHolder;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class AppListAdapter extends FermatAdapter<IntraUserInformation, AppWorldHolder> {
+public class AppListAdapter extends FermatAdapter<IntraUserInformation, IntraUserInformationHolder> {
 
 
     public AppListAdapter(Context context) {
@@ -25,17 +25,17 @@ public class AppListAdapter extends FermatAdapter<IntraUserInformation, AppWorld
     }
 
     @Override
-    protected AppWorldHolder createHolder(View itemView, int type) {
-        return new AppWorldHolder(itemView);
+    protected IntraUserInformationHolder createHolder(View itemView, int type) {
+        return new IntraUserInformationHolder(itemView);
     }
 
     @Override
     protected int getCardViewResource() {
-        return R.layout.row_connections_world;
+        return R.layout.world_frament_row;
     }
 
     @Override
-    protected void bindHolder(AppWorldHolder holder, IntraUserInformation data, int position) {
+    protected void bindHolder(IntraUserInformationHolder holder, IntraUserInformation data, int position) {
         holder.name.setText(data.getName());
         byte[] profileImage = data.getProfileImage();
         if (profileImage != null) {

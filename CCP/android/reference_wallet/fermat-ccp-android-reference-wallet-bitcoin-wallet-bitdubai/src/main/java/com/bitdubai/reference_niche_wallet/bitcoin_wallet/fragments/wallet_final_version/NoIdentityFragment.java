@@ -43,6 +43,7 @@ public class NoIdentityFragment extends FermatWalletFragment {
         super.onCreate(savedInstanceState);
         try {
             referenceWalletSession = (ReferenceWalletSession) appSession;
+            intraUserModuleManager = referenceWalletSession.getIntraUserModuleManager();
 
         } catch (Exception e){
             e.printStackTrace();

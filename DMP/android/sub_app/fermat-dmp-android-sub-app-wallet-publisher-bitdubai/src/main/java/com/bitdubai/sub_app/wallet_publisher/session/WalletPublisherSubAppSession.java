@@ -54,6 +54,10 @@ public class WalletPublisherSubAppSession extends AbstractFermatSession<Installe
         this.walletPublisherManager=walletPublisherManager;
     }
 
+    @Override
+    public InstalledSubApp getSubAppSessionType() {
+        return getFermatApp();
+    }
 
     @Override
     public void setData(String key, Object object) {

@@ -3,12 +3,13 @@ package com.bitdubai.sub_app.intra_user_community.holders;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.bitdubai.fermat_android_api.layer.definition.wallet.FermatRoundedImageView;
 import com.bitdubai.fermat_android_api.layer.definition.wallet.views.FermatTextView;
 import com.bitdubai.fermat_android_api.ui.holders.FermatViewHolder;
 import com.bitdubai.sub_app.intra_user_community.R;
 
 /**
- * @author Jose Manuel De Sousa
+ * @author Jose manuel De Sousa
  */
 public class AppFriendsListHolder extends FermatViewHolder {
 
@@ -18,7 +19,7 @@ public class AppFriendsListHolder extends FermatViewHolder {
     /**
      * Constructor
      *
-     * @param itemView cast ui elements
+     * @param itemView
      */
     public AppFriendsListHolder(View itemView) {
         super(itemView);

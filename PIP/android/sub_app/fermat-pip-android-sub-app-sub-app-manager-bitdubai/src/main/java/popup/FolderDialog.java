@@ -84,7 +84,7 @@ public class FolderDialog extends FermatDialog<DesktopSession,SubAppResourcesPro
     }
 
     @Override
-    protected int setWindowFeature() {
+    protected int setWindowFeacture() {
         return Window.FEATURE_NO_TITLE;
     }
 }

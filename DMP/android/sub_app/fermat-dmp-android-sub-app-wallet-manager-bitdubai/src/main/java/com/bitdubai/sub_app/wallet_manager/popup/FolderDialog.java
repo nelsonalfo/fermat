@@ -61,6 +61,12 @@ public class FolderDialog extends FermatDialog<DesktopSession,SubAppResourcesPro
 
     private void init() {
         recyclerView = (RecyclerView) findViewById(R.id.gridView);
+//        if(lstItems.size()>3)
+//        recyclerView.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+//        else if (lstItems.size()<3){
+//            recyclerView.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+//        }
+
         recyclerView.setHasFixedSize(true);
         layoutManager = new GridLayoutManager(getActivity(), 3, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
@@ -68,6 +74,8 @@ public class FolderDialog extends FermatDialog<DesktopSession,SubAppResourcesPro
         recyclerView.setAdapter(adapter);
         int spacingInPixels = 20;
         recyclerView.addItemDecoration(new SpacesItemDecoration(spacingInPixels));
+
+
         FermatTextView txt_title = (FermatTextView) findViewById(R.id.txt_title);
         txt_title.setText(title);
 
@@ -79,7 +87,7 @@ public class FolderDialog extends FermatDialog<DesktopSession,SubAppResourcesPro
     }
 
     @Override
-    protected int setWindowFeature() {
+    protected int setWindowFeacture() {
         return Window.FEATURE_NO_TITLE;
     }
 }

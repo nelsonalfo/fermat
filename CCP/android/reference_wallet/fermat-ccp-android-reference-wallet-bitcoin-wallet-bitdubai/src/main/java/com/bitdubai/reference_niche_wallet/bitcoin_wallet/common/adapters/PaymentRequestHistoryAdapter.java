@@ -181,7 +181,7 @@ public class PaymentRequestHistoryAdapter  extends FermatAdapter<PaymentRequest,
                 public void onClick(View view) {
                     try {
                         cryptoWallet.approveRequest(data.getRequestId()
-                                , referenceWalletSession.getIntraUserModuleManager().getPublicKey());
+                                , referenceWalletSession.getIntraUserModuleManager().getActiveIntraUserIdentity().getPublicKey());
                         Toast.makeText(context, "Request accepted", Toast.LENGTH_SHORT).show();
                         notifyDataSetChanged();
                     } catch (Exception e) {

@@ -1,4 +1,4 @@
-package unit.com.bitdubai.fermat_osa_addon.layer.android.database_system.developer.bitdubai.version_1.structure.AndroidDatabaseTransaction;
+package AndroidDatabaseTransaction;
 
 import android.app.Activity;
 import android.content.Context;
@@ -32,7 +32,7 @@ import unit.com.bitdubai.fermat_osa_addon.layer.android.database_system.develope
 public class InsertsAndroidDatabaseTransactionTest{
 
     private Activity mockActivity;
-    private String mockContext;
+    private Context mockContext;
 
     private AndroidDatabase testDatabase;
     private UUID testOwnerId;
@@ -46,7 +46,7 @@ public class InsertsAndroidDatabaseTransactionTest{
 
     public  void setUpDatabase() throws Exception {
         mockActivity = Robolectric.setupActivity(Activity.class);
-        mockContext = "test1"; //shadowOf(mockActivity).getApplicationContext();
+        mockContext = shadowOf(mockActivity).getApplicationContext();
         testOwnerId = UUID.randomUUID();
         testDatabase = new AndroidDatabase(mockContext, testOwnerId, testDatabaseName);
         testDatabase.createDatabase(testDatabaseName);
@@ -101,4 +101,5 @@ public class InsertsAndroidDatabaseTransactionTest{
         assertThat(transaction_1.getRecordsToInsert()).isNotEqualTo(transaction_2.getRecordsToInsert());
         assertThat(transaction_1.getTablesToInsert()).isNotEqualTo(transaction_2.getTablesToInsert());
     }
+
 }

@@ -723,13 +723,12 @@ public final class CryptoPaymentRequestNetworkServicePluginRoot extends Abstract
 
     /**
      * (non-javadoc)
-     * @see NetworkService#constructDiscoveryQueryParamsFactory(PlatformComponentType, NetworkServiceType, String, String,String, Location, Double, String, String, Integer, Integer, PlatformComponentType, NetworkServiceType)
+     * @see NetworkService#constructDiscoveryQueryParamsFactory(PlatformComponentType, NetworkServiceType, String, String, Location, Double, String, String, Integer, Integer, PlatformComponentType, NetworkServiceType)
      */
     @Override
     public DiscoveryQueryParameters constructDiscoveryQueryParamsFactory(final PlatformComponentType    platformComponentType         ,
                                                                          final NetworkServiceType       networkServiceType            ,
                                                                          final String                   alias                         ,
-                                                                         final String                   phrase                         ,
                                                                          final String                   identityPublicKey             ,
                                                                          final Location                 location                      ,
                                                                          final Double                   distance                      ,
@@ -744,7 +743,6 @@ public final class CryptoPaymentRequestNetworkServicePluginRoot extends Abstract
                 platformComponentType,
                 networkServiceType,
                 alias,
-                phrase,
                 identityPublicKey,
                 location,
                 distance,

@@ -43,7 +43,6 @@ import com.bitdubai.fermat_ccp_api.layer.wallet_module.crypto_wallet.exceptions.
 import com.bitdubai.fermat_ccp_api.layer.wallet_module.crypto_wallet.exceptions.CantGetCryptoWalletException;
 import com.bitdubai.fermat_ccp_api.layer.wallet_module.crypto_wallet.exceptions.CantListTransactionsException;
 import com.bitdubai.fermat_ccp_api.layer.wallet_module.crypto_wallet.interfaces.CryptoWallet;
-import com.bitdubai.fermat_ccp_api.layer.wallet_module.crypto_wallet.interfaces.CryptoWalletIntraUserIdentity;
 import com.bitdubai.fermat_ccp_api.layer.wallet_module.crypto_wallet.interfaces.CryptoWalletTransaction;
 import com.bitdubai.fermat_pip_api.layer.platform_service.error_manager.interfaces.ErrorManager;
 import com.bitdubai.fermat_pip_api.layer.platform_service.error_manager.enums.UnexpectedPluginExceptionSeverity;
@@ -55,7 +54,6 @@ import com.bitdubai.reference_niche_wallet.bitcoin_wallet.common.animation.Anima
 import com.bitdubai.reference_niche_wallet.bitcoin_wallet.common.enums.ShowMoneyType;
 import com.bitdubai.reference_niche_wallet.bitcoin_wallet.common.models.GrouperItem;
 import com.bitdubai.reference_niche_wallet.bitcoin_wallet.common.navigation_drawer.BitcoinWalletNavigationViewPainter;
-import com.bitdubai.reference_niche_wallet.bitcoin_wallet.common.popup.PresentationBitcoinWalletDialog;
 import com.bitdubai.reference_niche_wallet.bitcoin_wallet.common.utils.WalletUtils;
 import com.bitdubai.reference_niche_wallet.bitcoin_wallet.session.ReferenceWalletSession;
 
@@ -121,22 +119,17 @@ public class SendTransactionFragment2 extends FermatWalletExpandableListFragment
             moduleManager = referenceWalletSession.getModuleManager().getCryptoWallet();
             errorManager = appSession.getErrorManager();
 
-            CryptoWalletIntraUserIdentity lst = referenceWalletSession.getIntraUserModuleManager();
+            IntraUserLoginIdentity lst = referenceWalletSession.getIntraUserModuleManager().getActiveIntraUserIdentity();
             if(lst==null){
 //                Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.profile_image);
 //                ByteArrayOutputStream stream = new ByteArrayOutputStream();
 //                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
 //                byte[] byteArray = stream.toByteArray();
-                referenceWalletSession.getModuleManager().getCryptoWallet().createIntraUser("John Doe", "", null);
+                referenceWalletSession.getIntraUserModuleManager().createIntraUser("John Doe",null);
             }
 //            if(lst==null){
 //                startWizard(WizardTypes.CCP_WALLET_BITCOIN_START_WIZARD.getKey(),appSession, walletSettings, walletResourcesProviderManager, null);
 //            }
-            Handler handlerTimer = new Handler();
-            handlerTimer.postDelayed(new Runnable(){
-                public void run() {
-                        setUpPresentation();
-                }}, 500);
         } catch (Exception ex) {
             if (errorManager != null)
                 errorManager.reportUnexpectedWalletException(Wallets.CWP_WALLET_RUNTIME_WALLET_BITCOIN_WALLET_ALL_BITDUBAI,
@@ -146,35 +139,16 @@ public class SendTransactionFragment2 extends FermatWalletExpandableListFragment
         openNegotiationList = (ArrayList) getMoreDataAsync(FermatRefreshTypes.NEW, 0);
     }
 
-    private void setUpPresentation() {
-        PresentationBitcoinWalletDialog presentationBitcoinWalletDialog = new PresentationBitcoinWalletDialog(getActivity(),referenceWalletSession,null);
-        presentationBitcoinWalletDialog.show();
-    }
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         try {
             super.onActivityCreated(savedInstanceState);
             animationManager = new AnimationManager(rootView,emptyListViewsContainer);
             getPaintActivtyFeactures().addCollapseAnimation(animationManager);
-            final CryptoWalletIntraUserIdentity cryptoWalletIntraUserIdentity = referenceWalletSession.getIntraUserModuleManager();
-            IntraUserLoginIdentity intraUserLoginIdentity = new IntraUserLoginIdentity() {
-                @Override
-                public String getAlias() {
-                    return cryptoWalletIntraUserIdentity.getAlias();
-                }
-
-                @Override
-                public String getPublicKey() {
-                    return cryptoWalletIntraUserIdentity.getPublicKey();
-                }
-
-                @Override
-                public byte[] getProfileImage() {
-                    return cryptoWalletIntraUserIdentity.getProfileImage();
-                }
-            };
-            getPaintActivtyFeactures().addNavigationView(new BitcoinWalletNavigationViewPainter(getActivity(), intraUserLoginIdentity));
+            getPaintActivtyFeactures().addNavigationView(new BitcoinWalletNavigationViewPainter(getActivity(), referenceWalletSession.getIntraUserModuleManager().getActiveIntraUserIdentity()));
+        } catch (CantGetActiveLoginIdentityException e) {
+            makeText(getActivity(), "Oooops! recovering from system error", Toast.LENGTH_SHORT).show();
+            referenceWalletSession.getErrorManager().reportUnexpectedUIException(UISource.VIEW, UnexpectedUIExceptionSeverity.CRASH, e);
         } catch (Exception e){
             makeText(getActivity(), "Oooops! recovering from system error", Toast.LENGTH_SHORT).show();
             referenceWalletSession.getErrorManager().reportUnexpectedUIException(UISource.VIEW, UnexpectedUIExceptionSeverity.CRASH, e);
@@ -406,7 +380,7 @@ public class SendTransactionFragment2 extends FermatWalletExpandableListFragment
         ArrayList<GrouperItem> data = new ArrayList<>();
 
         try {
-            CryptoWalletIntraUserIdentity intraUserLoginIdentity = referenceWalletSession.getIntraUserModuleManager();
+            IntraUserLoginIdentity intraUserLoginIdentity = referenceWalletSession.getIntraUserModuleManager().getActiveIntraUserIdentity();
             if(intraUserLoginIdentity!=null) {
                 String intraUserPk = intraUserLoginIdentity.getPublicKey();
 
@@ -437,6 +411,8 @@ public class SendTransactionFragment2 extends FermatWalletExpandableListFragment
             }
 
         } catch (CantListTransactionsException e) {
+            e.printStackTrace();
+        } catch (CantGetActiveLoginIdentityException e) {
             e.printStackTrace();
         } catch (Exception e){
             e.printStackTrace();

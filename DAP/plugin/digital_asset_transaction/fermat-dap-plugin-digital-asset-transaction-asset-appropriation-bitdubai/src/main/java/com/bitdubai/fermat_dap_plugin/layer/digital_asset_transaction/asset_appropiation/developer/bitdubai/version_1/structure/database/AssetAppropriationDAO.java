@@ -576,10 +576,6 @@ public class AssetAppropriationDAO implements AutoCloseable {
         return EventType.getByCode(getStringFieldByEventId(AssetAppropriationDatabaseConstants.ASSET_APPROPRIATION_EVENTS_RECORDED_EVENT_COLUMN_NAME, id));
     }
 
-    public com.bitdubai.fermat_dap_api.layer.all_definition.enums.EventType getDAPEventTypeById(String id) throws CantLoadAssetAppropriationEventListException, InvalidParameterException, RecordsNotFoundException {
-        return com.bitdubai.fermat_dap_api.layer.all_definition.enums.EventType.getByCode(getStringFieldByEventId(AssetAppropriationDatabaseConstants.ASSET_APPROPRIATION_EVENTS_RECORDED_EVENT_COLUMN_NAME, id));
-    }
-
     public EventSource getEventSourceById(String id) throws CantLoadAssetAppropriationEventListException, InvalidParameterException, RecordsNotFoundException {
         return EventSource.getByCode(getStringFieldByEventId(AssetAppropriationDatabaseConstants.ASSET_APPROPRIATION_EVENTS_RECORDED_SOURCE_COLUMN_NAME, id));
     }
@@ -590,10 +586,6 @@ public class AssetAppropriationDAO implements AutoCloseable {
 
     public boolean isPendingActorAssetUserEvents() throws CantLoadAssetAppropriationEventListException {
         return isPendingEventsBySource(EventSource.NETWORK_SERVICE_ACTOR_ASSET_USER);
-    }
-
-    public List<String> getPendingIssuerNetworkServiceEvents() throws CantLoadAssetAppropriationEventListException {
-        return getPendingEventsBySource(EventSource.NETWORK_SERVICE_ACTOR_ASSET_ISSUER);
     }
 
 

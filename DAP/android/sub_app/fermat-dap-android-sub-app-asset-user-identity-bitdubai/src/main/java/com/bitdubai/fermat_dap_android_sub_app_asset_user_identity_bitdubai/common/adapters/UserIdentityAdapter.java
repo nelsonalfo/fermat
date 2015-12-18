@@ -38,7 +38,7 @@ public class UserIdentityAdapter extends FermatAdapter<IdentityAssetUser, UserId
 
     @Override
     protected void bindHolder(final UserIdentityViewHolder holder, final IdentityAssetUser data, final int position) {
-        holder.getIdentityName().setText(data.getAlias());
+        holder.getIdentityName().setText(data.getAlias() != null ? data.getAlias() : null);
 
         byte[] profileImage = data.getProfileImage();
         Bitmap imageBitmap = profileImage == null ?

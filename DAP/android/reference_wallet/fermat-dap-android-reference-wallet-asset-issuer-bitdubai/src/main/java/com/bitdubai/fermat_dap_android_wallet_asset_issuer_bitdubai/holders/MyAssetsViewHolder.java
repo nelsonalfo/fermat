@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -14,11 +13,10 @@ import com.bitdubai.fermat_android_api.layer.definition.wallet.views.FermatTextV
 import com.bitdubai.fermat_android_api.ui.holders.FermatViewHolder;
 import com.bitdubai.fermat_android_api.ui.interfaces.FermatWorkerCallBack;
 import com.bitdubai.fermat_android_api.ui.util.FermatWorker;
+import com.bitdubai.fermat_api.layer.all_definition.navigation_structure.interfaces.FermatActivity;
 import com.bitdubai.fermat_dap_android_wallet_asset_issuer_bitdubai.R;
 import com.bitdubai.fermat_dap_android_wallet_asset_issuer_bitdubai.models.DigitalAsset;
 import com.bitdubai.fermat_dap_api.layer.dap_module.wallet_asset_issuer.interfaces.AssetIssuerWalletSupAppModuleManager;
-
-import java.io.ByteArrayInputStream;
 
 /**
  * Created by frank on 12/8/15.
@@ -57,15 +55,12 @@ public class MyAssetsViewHolder extends FermatViewHolder {
     }
 
     public void bind(final DigitalAsset digitalAsset) {
-        if (digitalAsset.getImage() != null) {
-            image.setImageBitmap(BitmapFactory.decodeStream(new ByteArrayInputStream(digitalAsset.getImage())));
-        } else {
-            image.setImageDrawable(res.getDrawable(R.drawable.img_asset_without_image));
-        }
+        image.setImageDrawable(res.getDrawable(R.drawable.img_asset_without_image)); //TODO change for asset image or default image
         nameText.setText(digitalAsset.getName());
-        availableText.setText(digitalAsset.getAvailableBalanceQuantity()+"");
-        bookText.setText(digitalAsset.getBookBalanceQuantity()+"");
-        btcText.setText(digitalAsset.getFormattedAvailableBalanceBitcoin()+" BTC");
+        //TODO format this fields
+        availableText.setText(digitalAsset.getAvailableBalance()+"");
+        bookText.setText(digitalAsset.getBookBalance()+"");
+        btcText.setText(digitalAsset.getBitcoinAmount()+" BTC");
         expDateText.setText(digitalAsset.getFormattedExpDate());
 
         distributeTempButton.setOnClickListener(new View.OnClickListener() {

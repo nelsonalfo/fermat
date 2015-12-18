@@ -10,7 +10,10 @@ import com.bitdubai.fermat_android_api.ui.adapters.FermatAdapter;
 import com.bitdubai.fermat_ccp_api.layer.module.intra_user.interfaces.IntraUserInformation;
 import com.bitdubai.sub_app.intra_user_community.R;
 import com.bitdubai.sub_app.intra_user_community.holders.AppNotificationsHolder;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,7 +32,7 @@ public class AppNotificationAdapter extends FermatAdapter<IntraUserInformation, 
 
     @Override
     protected int getCardViewResource() {
-        return R.layout.row_connection_notification;
+        return R.layout.wallet_notification_row;
     }
 
     @Override

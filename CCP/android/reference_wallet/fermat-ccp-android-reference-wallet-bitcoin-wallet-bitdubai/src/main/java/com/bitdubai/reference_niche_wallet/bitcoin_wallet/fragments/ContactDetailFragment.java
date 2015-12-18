@@ -162,7 +162,7 @@ public class ContactDetailFragment extends FermatWalletFragment implements View.
                         cryptoWallet,
                         referenceWalletSession.getErrorManager(),
                         cryptoWalletWalletContact,
-                        referenceWalletSession.getIntraUserModuleManager().getPublicKey(),
+                        referenceWalletSession.getIntraUserModuleManager().getActiveIntraUserIdentity().getPublicKey(),
                         referenceWalletSession.getAppPublicKey());
                 receiveFragmentDialog.show();
             }

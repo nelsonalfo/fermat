@@ -29,7 +29,6 @@ import java.util.UUID;
 public class IntraWalletUserIdentity implements DealsWithPluginFileSystem, DealsWithPluginIdentity, com.bitdubai.fermat_ccp_api.layer.identity.intra_user.interfaces.IntraWalletUserIdentity {
 
     private String alias;
-    private String phrase;
     private String publicKey;
     private byte[] profileImage;
     private String privateKey;
@@ -37,9 +36,8 @@ public class IntraWalletUserIdentity implements DealsWithPluginFileSystem, Deals
     /**
      * Constructor
      */
-    public IntraWalletUserIdentity(String alias, String phrase,String publicKey, String privateKey, byte[] profileImage, PluginFileSystem pluginFileSystem, UUID pluginId) {
+    public IntraWalletUserIdentity(String alias, String publicKey, String privateKey, byte[] profileImage, PluginFileSystem pluginFileSystem, UUID pluginId) {
         this.alias = alias;
-        this.phrase = phrase;
         this.publicKey = publicKey;
         this.profileImage = profileImage;
         this.privateKey = privateKey;
@@ -50,11 +48,6 @@ public class IntraWalletUserIdentity implements DealsWithPluginFileSystem, Deals
     @Override
     public String getAlias() {
         return this.alias;
-    }
-
-    @Override
-    public String getPhrase(){
-        return this.phrase;
     }
 
     @Override

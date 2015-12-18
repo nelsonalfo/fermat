@@ -71,6 +71,7 @@ public class AssetIssuerIdentityDeveloperDatabaseFactory implements DealsWithPlu
              /*
               * Open new database connection
               */
+//            database = this.pluginDatabaseSystem.openDatabase(pluginId, pluginId.toString());
             database = this.pluginDatabaseSystem.openDatabase(pluginId, AssetIssuerIdentityDatabaseConstants.ASSET_ISSUER_IDENTITY_DB_NAME);
             database.closeDatabase();
 
@@ -93,6 +94,7 @@ public class AssetIssuerIdentityDeveloperDatabaseFactory implements DealsWithPlu
                   /*
                    * We create the new database
                    */
+//                database = assetIssuerIdentityDatabaseFactory.createDatabase(pluginId);
                 database = assetIssuerIdentityDatabaseFactory.createDatabase(pluginId);
                 database.closeDatabase();
             } catch (CantCreateDatabaseException cantCreateDatabaseException) {

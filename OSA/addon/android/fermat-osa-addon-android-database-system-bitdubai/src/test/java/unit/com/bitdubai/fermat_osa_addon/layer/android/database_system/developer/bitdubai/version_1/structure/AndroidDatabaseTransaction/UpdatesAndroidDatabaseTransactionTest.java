@@ -31,7 +31,7 @@ import unit.com.bitdubai.fermat_osa_addon.layer.android.database_system.develope
 public class UpdatesAndroidDatabaseTransactionTest {
 
     private Activity mockActivity;
-    private String mockContext;
+    private Context mockContext;
 
     private AndroidDatabase testDatabase;
     private UUID testOwnerId;
@@ -45,7 +45,7 @@ public class UpdatesAndroidDatabaseTransactionTest {
 
     public  void setUpDatabase() throws Exception {
         mockActivity = Robolectric.setupActivity(Activity.class);
-        mockContext = "test1"; //shadowOf(mockActivity).getApplicationContext();
+        mockContext = shadowOf(mockActivity).getApplicationContext();
         testOwnerId = UUID.randomUUID();
         testDatabase = new AndroidDatabase(mockContext, testOwnerId, testDatabaseName);
         testDatabase.createDatabase(testDatabaseName);

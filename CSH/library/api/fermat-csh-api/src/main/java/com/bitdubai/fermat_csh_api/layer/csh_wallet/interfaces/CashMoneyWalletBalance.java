@@ -8,7 +8,6 @@ import com.bitdubai.fermat_csh_api.layer.csh_wallet.exceptions.CantRegisterDebit
 import com.bitdubai.fermat_csh_api.layer.csh_wallet.exceptions.CantRegisterHoldException;
 import com.bitdubai.fermat_csh_api.layer.csh_wallet.exceptions.CantRegisterUnholdException;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 /**
@@ -22,22 +21,22 @@ public interface CashMoneyWalletBalance {
     /**
      * Returns the Balance this CashMoneyWalletBalance belongs to. (Can be available or book)
      *
-     * @return A BigDecimal, containing the balance.
+     * @return A double, containing the balance.
      */
-    BigDecimal getBalance() throws CantGetCashMoneyWalletBalanceException;
+    double getBalance() throws CantGetCashMoneyWalletBalanceException;
 
     /**
      * Registers a debit on the Balance of this CashMoneyWalletBalance. (Can be available or book)
      *
      */
 
-    void debit(UUID transactionId, String publicKeyActor, String publicKeyPlugin, BigDecimal amount, String memo) throws CantRegisterDebitException;
+    void debit(UUID transactionId, String publicKeyActor, String publicKeyPlugin, float amount, String memo) throws CantRegisterDebitException;
 
     /**
      * Registers a credit on the Balance of his CashMoneyWalletBalance. (Can be available or book)
      *
      */
-    void credit(UUID transactionId, String publicKeyActor, String publicKeyPlugin, BigDecimal amount, String memo) throws CantRegisterCreditException;
+    void credit(UUID transactionId, String publicKeyActor, String publicKeyPlugin, float amount, String memo) throws CantRegisterCreditException;
 
 
 

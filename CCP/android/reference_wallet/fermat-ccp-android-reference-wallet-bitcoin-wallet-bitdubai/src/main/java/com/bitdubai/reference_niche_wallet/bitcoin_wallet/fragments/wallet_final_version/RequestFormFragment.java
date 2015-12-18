@@ -54,6 +54,7 @@ public class RequestFormFragment extends FermatWalletFragment implements View.On
      */
     private ReferenceWalletSession referenceWalletSession;
     private CryptoWallet cryptoWallet;
+    private IntraUserModuleManager intraUserModuleManager;
 
     /**
      * UI
@@ -79,6 +80,7 @@ public class RequestFormFragment extends FermatWalletFragment implements View.On
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         referenceWalletSession = (ReferenceWalletSession) appSession;
+        intraUserModuleManager = referenceWalletSession.getIntraUserModuleManager();
         try {
             cryptoWallet = referenceWalletSession.getModuleManager().getCryptoWallet();
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -198,7 +200,7 @@ public class RequestFormFragment extends FermatWalletFragment implements View.On
             } else if (cryptoWalletWalletContact.getReceivedCryptoAddress().isEmpty()) {
                 Toast.makeText(getActivity(), "We can't find an address for the contact yet.", Toast.LENGTH_LONG).show();
             } else {
-                String identityPublicKey = referenceWalletSession.getIntraUserModuleManager().getPublicKey();
+                String identityPublicKey = intraUserModuleManager.getActiveIntraUserIdentity().getPublicKey();
 
                 CryptoAddress cryptoAddress = cryptoWallet.requestAddressToKnownUser(
                         identityPublicKey,

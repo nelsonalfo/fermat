@@ -11,7 +11,6 @@ import com.bitdubai.fermat_csh_api.layer.csh_wallet.exceptions.CantRegisterHoldE
 import com.bitdubai.fermat_csh_api.layer.csh_wallet.exceptions.CantRegisterUnholdException;
 import com.bitdubai.fermat_csh_api.layer.csh_wallet.exceptions.CashMoneyWalletNotLoadedException;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -61,21 +60,21 @@ public interface CashMoneyWallet {
     /**
      * Returns the funds held on this Wallet by a specific Actor
      *
-     * @return A BigDecimal containing the amount of cash held
+     * @return A double containing the amount of cash held
      */
-    BigDecimal getHeldFunds(String actorPublicKey) throws CantGetHeldFundsException;
+    double getHeldFunds(String actorPublicKey) throws CantGetHeldFundsException;
 
 
     /**
      * Registers a hold on the Available Balance of this CashMoneyWalletBalance.
      *
      */
-    void hold(UUID transactionId, String publicKeyActor, String publicKeyPlugin, BigDecimal amount, String memo) throws CantRegisterHoldException;
+    void hold(UUID transactionId, String publicKeyActor, String publicKeyPlugin, float amount, String memo) throws CantRegisterHoldException;
 
     /**
      * Registers an unhold on the Availiable Balance of this CashMoneyWalletBalance.
      *
      */
-    void unhold(UUID transactionId, String publicKeyActor, String publicKeyPlugin, BigDecimal amount, String memo) throws CantRegisterUnholdException;
+    void unhold(UUID transactionId, String publicKeyActor, String publicKeyPlugin, float amount, String memo) throws CantRegisterUnholdException;
 
 }

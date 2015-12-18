@@ -3,7 +3,6 @@ package com.bitdubai.fermat_bch_plugin.layer.asset_vault.developer.bitdubai.vers
 import com.bitdubai.fermat_api.CantStartAgentException;
 import com.bitdubai.fermat_api.layer.osa_android.database_system.PluginDatabaseSystem;
 import com.bitdubai.fermat_bch_api.layer.crypto_network.bitcoin.interfaces.BitcoinNetworkManager;
-import com.bitdubai.fermat_bch_api.layer.crypto_vault.classes.HierarchyAccount.HierarchyAccountType;
 import com.bitdubai.fermat_bch_plugin.layer.asset_vault.developer.bitdubai.version_1.database.AssetsOverBitcoinCryptoVaultDao;
 import com.bitdubai.fermat_bch_plugin.layer.asset_vault.developer.bitdubai.version_1.exceptions.CantExecuteDatabaseOperationException;
 import com.bitdubai.fermat_bch_plugin.layer.asset_vault.developer.bitdubai.version_1.exceptions.CantInitializeAssetsOverBitcoinCryptoVaultDatabaseException;
@@ -111,7 +110,7 @@ class VaultKeyHierarchyGenerator implements Runnable{
          * I will get from the database the list of accounts to create
          * and add them to the hierarchy
          */
-        for (com.bitdubai.fermat_bch_api.layer.crypto_vault.classes.HierarchyAccount.HierarchyAccount hierarchyAccount : getHierarchyAccounts()){
+        for (HierarchyAccount hierarchyAccount : getHierarchyAccounts()){
             vaultKeyHierarchy.addVaultAccount(hierarchyAccount);
         }
 
@@ -140,8 +139,8 @@ class VaultKeyHierarchyGenerator implements Runnable{
      * Gets the list of stored HierarchyAccounts. If no accounts exists, it will create the zero account.
      * @return the store list of accounts
      */
-    private List<com.bitdubai.fermat_bch_api.layer.crypto_vault.classes.HierarchyAccount.HierarchyAccount> getHierarchyAccounts() throws CantLoadHierarchyAccountsException {
-        List<com.bitdubai.fermat_bch_api.layer.crypto_vault.classes.HierarchyAccount.HierarchyAccount> hierarchyAccounts = new ArrayList<>();
+    private List<HierarchyAccount> getHierarchyAccounts() throws CantLoadHierarchyAccountsException {
+        List<HierarchyAccount> hierarchyAccounts = new ArrayList<>();
 
         /**
          * Gets the Hierarchy accouns from the database
@@ -164,7 +163,7 @@ class VaultKeyHierarchyGenerator implements Runnable{
          * the account 0 that will be used by the asset vault.
          */
         if (hierarchyAccounts.size() == 0){
-            com.bitdubai.fermat_bch_api.layer.crypto_vault.classes.HierarchyAccount.HierarchyAccount accountZero = new com.bitdubai.fermat_bch_api.layer.crypto_vault.classes.HierarchyAccount.HierarchyAccount(0, "Asset Vault account", HierarchyAccountType.MASTER_ACCOUNT);
+            HierarchyAccount accountZero = new HierarchyAccount(0, "Asset Vault account");
             hierarchyAccounts.add(accountZero);
 
             /**

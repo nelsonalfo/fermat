@@ -46,6 +46,8 @@ public class OpenDatabaseTest {
 
     @Test
     public void openDatabase_DatabaseInPath_InvokedSuccesfully() throws Exception{
+        testDatabase = new AndroidPluginDatabaseSystem();
+        testDatabase.setContext(mockContext);
         testDatabase.createDatabase(ownerId,testDatabaseName);
         catchException(testDatabase).openDatabase(ownerId,testDatabaseName);
         assertThat(caughtException()).isNull();
@@ -53,6 +55,8 @@ public class OpenDatabaseTest {
 
     @Test
     public void openDatabase_DatabaseInAlreadyOpen_InvokedSuccesfully() throws Exception{
+        testDatabase = new AndroidPluginDatabaseSystem();
+        testDatabase.setContext(mockContext);
         testDatabase.createDatabase(ownerId,testDatabaseName);
         testDatabase.openDatabase(ownerId,testDatabaseName);
         catchException(testDatabase).openDatabase(ownerId,testDatabaseName);
@@ -61,6 +65,8 @@ public class OpenDatabaseTest {
 
     @Test
     public void openDatabase_NoDatabaseInPath_ThrowException() throws Exception{
+        testDatabase = new AndroidPluginDatabaseSystem();
+        testDatabase.setContext(mockContext);
         catchException(testDatabase).openDatabase(ownerId,testDatabaseName);
         assertThat(caughtException()).isInstanceOf(DatabaseNotFoundException.class);
 
@@ -68,6 +74,8 @@ public class OpenDatabaseTest {
 
     @Test
     public void openDatabase_DatabaseInPath_InvokedSuccesfully1() throws Exception{
+        testDatabase = new AndroidPluginDatabaseSystem();
+        testDatabase.setContext(mockContext);
         testDatabase.createDatabase(ownerId, testDatabaseName);
         catchException(testDatabase).openDatabase(ownerId,testDatabaseName);
         assertThat(caughtException()).isNull();

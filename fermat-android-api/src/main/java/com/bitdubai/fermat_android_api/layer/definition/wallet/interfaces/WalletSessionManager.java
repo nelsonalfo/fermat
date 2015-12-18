@@ -24,9 +24,10 @@ import java.util.Map;
  */
 public interface WalletSessionManager {
 
-    public Map<String,FermatSession<InstalledWallet> > listOpenWallets();
+    public Map<String,AbstractFermatSession> listOpenWallets();
 
-    public FermatSession<InstalledWallet> openWalletSession(InstalledWallet installedWallet,ErrorManager errorManager, ModuleManager moduleManager, AppConnections appConnections);    public boolean closeWalletSession(String publicKey);
+    public AbstractFermatSession openWalletSession(InstalledWallet installedWallet, CryptoWalletManager cryptoWalletManager, WalletSettings walletSettings, WalletResourcesProviderManager walletResourcesProviderManager, ErrorManager errorManager, CryptoBrokerWalletModuleManager cryptoBrokerWalletModuleManager, CryptoCustomerWalletModuleManager cryptoCustomerWalletModuleManager, AssetIssuerWalletSupAppModuleManager assetIssuerWalletManager, AssetUserWalletSubAppModuleManager assetUserModuleManager, AssetRedeemPointWalletSubAppModule assetRedeemPointWalletSubAppModule,ModuleManager moduleManager,BankMoneyWalletModuleManager bankMoneyWalletModuleManager,CashMoneyWalletModuleManager cashMoneyWalletModuleManager);//,EventManager eventManager);
+    public boolean closeWalletSession(String publicKey);
     public boolean isWalletOpen(String publicKey);
-    public FermatSession<InstalledWallet>  getWalletSession(String publicKey);
+    public AbstractFermatSession getWalletSession(String publicKey);
 }

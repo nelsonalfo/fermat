@@ -3,7 +3,6 @@ package com.bitdubai.reference_wallet.cash_money_wallet.common;
 import com.bitdubai.fermat_api.layer.all_definition.enums.FiatCurrency;
 import com.bitdubai.fermat_csh_api.layer.csh_cash_money_transaction.deposit.interfaces.CashDepositTransactionParameters;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 /**
@@ -15,13 +14,13 @@ public class CashDepositTransactionParametersImpl implements CashDepositTransact
     private String publicKeyWallet;
     private String publicKeyActor;
     private String publicKeyPlugin;
-    private BigDecimal amount;
+    private float amount;
     FiatCurrency currency;
     private String memo;
 
 
     public CashDepositTransactionParametersImpl(UUID transactionId, String publicKeyWallet, String publicKeyActor,
-                                                String publicKeyPlugin, BigDecimal amount, FiatCurrency currency, String memo)
+                                                String publicKeyPlugin, float amount, FiatCurrency currency, String memo)
     {
         this.transactionId = transactionId;
         this.publicKeyWallet = publicKeyWallet;
@@ -52,7 +51,7 @@ public class CashDepositTransactionParametersImpl implements CashDepositTransact
     public String getPublicKeyPlugin() { return this.publicKeyPlugin; }
 
     @Override
-    public BigDecimal getAmount() {
+    public float getAmount() {
         return amount;
     }
 

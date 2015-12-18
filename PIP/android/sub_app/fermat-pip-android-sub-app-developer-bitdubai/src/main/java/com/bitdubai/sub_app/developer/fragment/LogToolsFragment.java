@@ -100,7 +100,7 @@ public class LogToolsFragment extends FermatFragment {
         if (developerSubAppSession != null)
             errorManager = developerSubAppSession.getErrorManager();
         try {
-            ToolManager toolManager = developerSubAppSession.getModuleManager();
+            ToolManager toolManager = developerSubAppSession.getToolManager();
             logTool = toolManager.getLogTool();
         } catch (CantGetLogToolException e) {
             errorManager.reportUnexpectedUIException(UISource.ACTIVITY, UnexpectedUIExceptionSeverity.CRASH, FermatException.wrapException(e));

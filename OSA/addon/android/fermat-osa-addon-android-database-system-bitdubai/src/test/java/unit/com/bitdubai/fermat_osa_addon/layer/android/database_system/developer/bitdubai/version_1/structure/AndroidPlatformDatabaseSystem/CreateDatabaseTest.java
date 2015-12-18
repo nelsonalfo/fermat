@@ -42,6 +42,8 @@ public class CreateDatabaseTest {
         mockActivity = Robolectric.setupActivity(Activity.class);
         mockContext = shadowOf(mockActivity).getApplicationContext();
 
+        testDatabase = new AndroidPlatformDatabaseSystem();
+        testDatabase.setContext(mockContext);
         catchException(testDatabase).createDatabase(testDatabaseName);
         assertThat(caughtException()).isNull();
     }
@@ -49,6 +51,9 @@ public class CreateDatabaseTest {
     @Test
     public void createDatabase_TheDatabaseHasAlreadyBeenCreated_ThrowsCantCreateDatabaseException() throws Exception{
         mockActivity = Robolectric.setupActivity(Activity.class);
+
+        testDatabase = new AndroidPlatformDatabaseSystem();
+        testDatabase.setContext(null);
 
         catchException(testDatabase).createDatabase(testDatabaseName);
         assertThat(caughtException()).isInstanceOf(CantCreateDatabaseException.class);

@@ -63,7 +63,7 @@ public class HomeFragment extends FermatFragment implements SwipeRefreshLayout.O
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         try {
-            manager = ((AssetUserCommunitySubAppSession) appSession).getModuleManager();
+            manager = ((AssetUserCommunitySubAppSession) appSession).getManager();
             errorManager = appSession.getErrorManager();
         } catch (Exception ex) {
             ex.printStackTrace();

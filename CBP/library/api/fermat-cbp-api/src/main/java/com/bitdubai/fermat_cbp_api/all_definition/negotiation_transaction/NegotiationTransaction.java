@@ -1,10 +1,6 @@
 package com.bitdubai.fermat_cbp_api.all_definition.negotiation_transaction;
 
 import com.bitdubai.fermat_cbp_api.all_definition.enums.NegotiationStatus;
-import com.bitdubai.fermat_cbp_api.all_definition.enums.NegotiationTransactionStatus;
-import com.bitdubai.fermat_cbp_api.all_definition.enums.NegotiationTransactionType;
-import com.bitdubai.fermat_cbp_api.all_definition.enums.NegotiationTransmissionState;
-import com.bitdubai.fermat_cbp_api.all_definition.enums.NegotiationType;
 
 import java.util.UUID;
 
@@ -21,9 +17,7 @@ public interface NegotiationTransaction {
 
     String getPublicKeyCustomer();
 
-    NegotiationTransactionStatus getStatusTransaction();
-
-    String getNegotiationXML();
+    NegotiationStatus getStatusTransaction();
 
     long getTimestamp();
 }

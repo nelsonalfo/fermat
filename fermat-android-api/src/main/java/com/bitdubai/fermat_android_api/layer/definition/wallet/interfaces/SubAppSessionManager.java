@@ -1,8 +1,5 @@
 package com.bitdubai.fermat_android_api.layer.definition.wallet.interfaces;
 
-import com.bitdubai.fermat_android_api.engine.FermatApplicationSession;
-import com.bitdubai.fermat_api.layer.all_definition.common.system.exceptions.CantGetModuleManagerException;
-import com.bitdubai.fermat_api.layer.all_definition.common.system.exceptions.ModuleManagerNotFoundException;
 import com.bitdubai.fermat_api.layer.dmp_module.sub_app_manager.InstalledSubApp;
 import com.bitdubai.fermat_api.layer.modules.ModuleManager;
 import com.bitdubai.fermat_pip_api.layer.platform_service.error_manager.interfaces.ErrorManager;
@@ -15,13 +12,13 @@ import java.util.Map;
 public interface SubAppSessionManager {
 
 
-    public FermatSession<InstalledSubApp> openSubAppSession(InstalledSubApp subApp,ErrorManager errorManager,ModuleManager moduleManager,AppConnections appConnections);
+    public SubAppsSession openSubAppSession(InstalledSubApp subApp,String subAppPublicKey, ErrorManager errorManager,ModuleManager moduleManager);
 
     public boolean closeSubAppSession(String subAppPublicKey);
     //subApp publicKey
-    public Map<String, FermatSession<InstalledSubApp>> listOpenSubApps();
+    public Map<String,SubAppsSession> listOpenSubApps();
 
     public boolean isSubAppOpen(String subAppPublicKey);
-    public FermatSession<InstalledSubApp> getSubAppsSession(String subAppPublicKey);
+    public SubAppsSession getSubAppsSession(String subAppPublicKey);
 
 }

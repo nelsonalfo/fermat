@@ -324,8 +324,7 @@ public class IntraWalletUserActorPluginRoot extends AbstractPlugin implements
             throw new CantCreateIntraWalletUserException("CAN'T ADD NEW INTRA USER REQUEST CONNECTION", e, "", "");
 
         } catch (RequestAlreadySendException e) {
-
-            //the intra user connection request already exist don't process
+            throw new CantCreateIntraWalletUserException("CAN'T ADD NEW INTRA USER REQUEST CONNECTION", FermatException.wrapException(e), "", "The request already sent to actor.");
 
         } catch (Exception e) {
             throw new CantCreateIntraWalletUserException("CAN'T ADD NEW INTRA USER REQUEST CONNECTION", FermatException.wrapException(e), "", "");

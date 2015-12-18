@@ -53,7 +53,9 @@ public class AndroidDatabaseTableOrderTest {
             String columnName,
             DatabaseFilterOrder direction
     ){
-        AndroidDatabaseTableOrder tableOrder = new AndroidDatabaseTableOrder(columnName, direction);
+        AndroidDatabaseTableOrder tableOrder = new AndroidDatabaseTableOrder();
+        tableOrder.setColumName(columnName);
+        tableOrder.setDirection(direction);
         return tableOrder;
     }
 }

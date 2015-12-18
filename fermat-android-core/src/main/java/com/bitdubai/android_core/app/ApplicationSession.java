@@ -5,7 +5,6 @@ import android.support.multidex.MultiDexApplication;
 
 import com.bitdubai.android_core.app.common.version_1.sessions.SubAppSessionManager;
 import com.bitdubai.android_core.app.common.version_1.sessions.WalletSessionManager;
-import com.bitdubai.fermat_android_api.engine.FermatApplicationSession;
 import com.bitdubai.fermat_android_api.engine.FermatSubAppFragmentFactory;
 import com.bitdubai.fermat_core.FermatSystem;
 
@@ -25,7 +24,7 @@ import java.util.HashMap;
  */
 
 
-public class ApplicationSession extends MultiDexApplication implements Serializable,FermatApplicationSession {
+public class ApplicationSession extends MultiDexApplication implements Serializable {
 
     /**
      * Application states

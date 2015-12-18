@@ -23,6 +23,4 @@ public interface WalletSession extends FermatSession{
 
     String getIdentityConnection();
 
-
-
 }

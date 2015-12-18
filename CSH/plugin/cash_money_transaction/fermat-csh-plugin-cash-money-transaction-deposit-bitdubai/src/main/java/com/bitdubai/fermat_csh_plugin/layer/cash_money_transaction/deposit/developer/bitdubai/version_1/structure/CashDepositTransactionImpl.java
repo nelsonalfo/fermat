@@ -3,7 +3,6 @@ package com.bitdubai.fermat_csh_plugin.layer.cash_money_transaction.deposit.deve
 import com.bitdubai.fermat_api.layer.all_definition.enums.FiatCurrency;
 import com.bitdubai.fermat_csh_api.layer.csh_cash_money_transaction.deposit.interfaces.CashDepositTransaction;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 /**
@@ -16,7 +15,7 @@ public class CashDepositTransactionImpl implements CashDepositTransaction {
     private String publicKeyWallet;
     private String publicKeyActor;
     private String publicKeyPlugin;
-    private BigDecimal amount;
+    private float amount;
     private FiatCurrency currency;
     private String memo;
     private long timestamp;
@@ -25,7 +24,7 @@ public class CashDepositTransactionImpl implements CashDepositTransaction {
                                       String publicKeyWallet,
                                       String publicKeyActor,
                                       String publicKeyPlugin,
-                                      BigDecimal amount,
+                                      float amount,
                                       FiatCurrency currency,
                                       String memo,
                                       long timestamp)
@@ -66,7 +65,7 @@ public class CashDepositTransactionImpl implements CashDepositTransaction {
     public String getPublicKeyPlugin() { return this.publicKeyPlugin; }
 
     @Override
-    public BigDecimal getAmount() {
+    public float getAmount() {
         return this.amount;
     }
 

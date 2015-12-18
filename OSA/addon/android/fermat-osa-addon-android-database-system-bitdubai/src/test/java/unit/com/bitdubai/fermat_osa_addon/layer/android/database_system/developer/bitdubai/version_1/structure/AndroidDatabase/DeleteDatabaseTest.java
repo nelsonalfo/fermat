@@ -30,7 +30,7 @@ import unit.com.bitdubai.fermat_osa_addon.layer.android.database_system.develope
 public class DeleteDatabaseTest {
 
     private Activity mockActivity;
-    private String mockContext;
+    private Context mockContext;
 
     private AndroidDatabase testDatabase;
     private String testDatabaseName = "testDatabase";
@@ -38,7 +38,7 @@ public class DeleteDatabaseTest {
     @Before
     public void setUpContext(){
         mockActivity = Robolectric.setupActivity(Activity.class);
-        mockContext = "test1"; //shadowOf(mockActivity).getApplicationContext();
+        mockContext = shadowOf(mockActivity).getApplicationContext();
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.bitdubai.fermat_dap_android_sub_app_asset_issuer_identity_bitdubai.fragments;
 
+
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,7 +18,6 @@ import com.bitdubai.fermat_dap_android_sub_app_asset_issuer_identity_bitdubai.co
 import com.bitdubai.fermat_dap_android_sub_app_asset_issuer_identity_bitdubai.common.views.DividerItemDecoration;
 import com.bitdubai.fermat_dap_android_sub_app_asset_issuer_identity_bitdubai.session.IssuerIdentitySubAppSession;
 import com.bitdubai.fermat_dap_android_sub_app_asset_issuer_identity_bitdubai.util.CommonLogger;
-import com.bitdubai.fermat_dap_api.layer.dap_identity.asset_issuer.exceptions.CantListAssetIssuersException;
 import com.bitdubai.fermat_dap_api.layer.dap_identity.asset_issuer.interfaces.IdentityAssetIssuer;
 import com.bitdubai.fermat_dap_api.layer.dap_identity.asset_issuer.interfaces.IdentityAssetIssuerManager;
 import com.bitdubai.fermat_pip_api.layer.platform_service.error_manager.interfaces.ErrorManager;
@@ -37,7 +37,6 @@ public class IdentityListFragment extends FermatListFragment<IdentityAssetIssuer
     private ErrorManager errorManager;
     private ArrayList<IdentityAssetIssuer> identityInformationList;
 
-    IssuerIdentitySubAppSession issuerIdentitySubAppSession;
 
     public static IdentityListFragment newInstance() {
         return new IdentityListFragment();
@@ -49,8 +48,7 @@ public class IdentityListFragment extends FermatListFragment<IdentityAssetIssuer
 
         try {
             // setting up  module
-            issuerIdentitySubAppSession = (IssuerIdentitySubAppSession) appSession;
-            moduleManager = issuerIdentitySubAppSession.getModuleManager();
+            moduleManager = ((IssuerIdentitySubAppSession) appSession).getModuleManager();
             errorManager = appSession.getErrorManager();
             identityInformationList = (ArrayList) getMoreDataAsync(FermatRefreshTypes.NEW, 0);
         } catch (Exception ex) {
@@ -85,12 +83,9 @@ public class IdentityListFragment extends FermatListFragment<IdentityAssetIssuer
                 newIdentityButton.setVisibility(View.INVISIBLE);
             else
                 newIdentityButton.setVisibility(View.VISIBLE);
-        } catch (CantListAssetIssuersException e) {
-                Toast.makeText(getActivity().getApplicationContext(), "Can't Get Asset Issuer List", Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
         } catch (Exception e) {
-                Toast.makeText(getActivity().getApplicationContext(), "Oooops! recovering from system error. Get Asset Issuer List", Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
+            Toast.makeText(getActivity().getApplicationContext(), "Oooops! recovering from system error. Get Intra User List", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
     }
 
@@ -119,6 +114,8 @@ public class IdentityListFragment extends FermatListFragment<IdentityAssetIssuer
         return true;
     }
 
+
+    @SuppressWarnings("unchecked")
     @Override
     public void onPostExecute(Object... result) {
         isRefreshing = false;
@@ -141,6 +138,7 @@ public class IdentityListFragment extends FermatListFragment<IdentityAssetIssuer
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public FermatAdapter getAdapter() {
         if (adapter == null) {
@@ -169,9 +167,10 @@ public class IdentityListFragment extends FermatListFragment<IdentityAssetIssuer
                 data = moduleManager.getIdentityAssetIssuersFromCurrentDeviceUser();
             }
         } catch (Exception e) {
-            Toast.makeText(getActivity().getApplicationContext(), "Oooops! recovering from system error. Get Identity Asset Issuer List", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity().getApplicationContext(), "Oooops! recovering from system error. Get Identity Asset Issuer ist", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
+
 
         return data;
     }

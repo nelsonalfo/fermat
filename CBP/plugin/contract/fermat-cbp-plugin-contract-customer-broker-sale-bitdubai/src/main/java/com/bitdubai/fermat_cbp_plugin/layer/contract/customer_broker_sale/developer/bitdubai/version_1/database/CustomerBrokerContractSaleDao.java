@@ -382,7 +382,7 @@ public class CustomerBrokerContractSaleDao {
                 String negotiationID,
                 String publicKeyCustomer,
                 String publicKeyBroker,
-                long DateTime,
+                Long DateTime,
                 ContractStatus status
         ) {
             databaseTableRecord.setStringValue(CustomerBrokerSaleContractDatabaseConstants.CONTRACTS_SALE_CONTRACT_ID_COLUMN_NAME, contractID);
@@ -398,8 +398,11 @@ public class CustomerBrokerContractSaleDao {
             String negotiationID = record.getStringValue(CustomerBrokerSaleContractDatabaseConstants.CONTRACTS_SALE_NEGOTIATION_ID_COLUMN_NAME);
             String customerPublicKey = record.getStringValue(CustomerBrokerSaleContractDatabaseConstants.CONTRACTS_SALE_CUSTOMER_PUBLIC_KEY_COLUMN_NAME);
             String brokerPublicKey = record.getStringValue(CustomerBrokerSaleContractDatabaseConstants.CONTRACTS_SALE_BROKER_PUBLIC_KEY_COLUMN_NAME);
-            long DateTime = record.getLongValue(CustomerBrokerSaleContractDatabaseConstants.CONTRACTS_SALE_DATA_TIME_COLUMN_NAME);
+            Long DateTime = record.getLongValue(CustomerBrokerSaleContractDatabaseConstants.CONTRACTS_SALE_DATA_TIME_COLUMN_NAME);
             ContractStatus status = ContractStatus.getByCode(record.getStringValue(CustomerBrokerSaleContractDatabaseConstants.CONTRACTS_SALE_STATUS_COLUMN_NAME));
+
+            // TODO: Agregar el campo Near a la Base de datos
+
             return new CustomerBrokerContractSaleInformation(
                     contractID,
                     negotiationID,
@@ -407,7 +410,8 @@ public class CustomerBrokerContractSaleDao {
                     brokerPublicKey,
                     DateTime,
                     status,
-                    getAllCustomerBrokerSaleContractClauses(contractID)
+                    getAllCustomerBrokerSaleContractClauses(contractID),
+                    true
             );
         }
 

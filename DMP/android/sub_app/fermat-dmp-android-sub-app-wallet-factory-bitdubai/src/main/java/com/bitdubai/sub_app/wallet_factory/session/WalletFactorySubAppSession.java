@@ -47,6 +47,11 @@ public class WalletFactorySubAppSession extends AbstractFermatSession<InstalledS
 
 
     @Override
+    public InstalledSubApp getSubAppSessionType() {
+        return getFermatApp();
+    }
+
+    @Override
     public void setData(String key, Object object) {
         data.put(key,object);
     }

@@ -54,7 +54,7 @@ public class ConnectionWithCommunityDialog extends FermatDialog<ReferenceWalletS
     }
 
     @Override
-    protected int setWindowFeature() {
+    protected int setWindowFeacture() {
         return Window.FEATURE_NO_TITLE;
     }
 

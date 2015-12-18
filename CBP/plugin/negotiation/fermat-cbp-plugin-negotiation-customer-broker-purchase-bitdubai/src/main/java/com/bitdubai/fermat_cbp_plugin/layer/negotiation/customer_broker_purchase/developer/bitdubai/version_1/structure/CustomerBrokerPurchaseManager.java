@@ -60,7 +60,12 @@ public class CustomerBrokerPurchaseManager implements CustomerBrokerPurchaseNego
             this.customerBrokerPurchaseNegotiationDao.updateCustomerBrokerPurchaseNegotiation(negotiation);
         }
 
-        @Override
+    @Override
+    public void updateNegotiationNearExpirationDatetime(UUID negotiationId, Boolean status) throws CantUpdateCustomerBrokerPurchaseNegotiationException {
+        this.customerBrokerPurchaseNegotiationDao.updateNegotiationNearExpirationDatetime(negotiationId, status);
+    }
+
+    @Override
         public void cancelNegotiation(CustomerBrokerPurchaseNegotiation negotiation) throws CantUpdateCustomerBrokerPurchaseNegotiationException {
             this.customerBrokerPurchaseNegotiationDao.cancelNegotiation(negotiation);
         }

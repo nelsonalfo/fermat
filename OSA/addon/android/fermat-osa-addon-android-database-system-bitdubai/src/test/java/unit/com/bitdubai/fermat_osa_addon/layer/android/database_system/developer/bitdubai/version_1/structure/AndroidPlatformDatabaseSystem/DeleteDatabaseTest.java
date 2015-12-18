@@ -45,6 +45,9 @@ public class DeleteDatabaseTest {
 
     @Test
     public void deleteDatabaseTest_ThrowCantOpenDatabaseException() throws Exception{
+        testDatabase = new AndroidPlatformDatabaseSystem();
+        testDatabase.setContext(mockContext);
+
         testDatabase.createDatabase( testDatabaseName);
         catchException(testDatabase).deleteDatabase("db");
 
@@ -55,6 +58,8 @@ public class DeleteDatabaseTest {
 
     @Test
     public void deleteDatabaseTest_deleteOk() throws Exception{
+        testDatabase = new AndroidPlatformDatabaseSystem();
+        testDatabase.setContext(mockContext);
         testDatabase.createDatabase( testDatabaseName);
 
         catchException(testDatabase).deleteDatabase(testDatabaseName);
