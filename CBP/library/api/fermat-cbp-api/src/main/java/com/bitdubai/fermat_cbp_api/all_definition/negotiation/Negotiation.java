@@ -55,9 +55,7 @@ public interface Negotiation {
      */
     NegotiationStatus getStatus();
 
-    /**
-     * @return the negotiation Status
-     */
+
     Integer getNearExpirationDatetime();
 
     /**
