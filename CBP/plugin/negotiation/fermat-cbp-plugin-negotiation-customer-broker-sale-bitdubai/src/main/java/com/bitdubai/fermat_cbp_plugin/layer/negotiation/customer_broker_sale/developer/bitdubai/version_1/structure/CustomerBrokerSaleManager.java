@@ -64,7 +64,7 @@ public class CustomerBrokerSaleManager implements CustomerBrokerSaleNegotiationM
     }
 
     @Override
-    public void updateNegotiationNearExpirationDatetime(String negotiationId, Boolean status) throws CantUpdateCustomerBrokerSaleException {
+    public void updateNegotiationNearExpirationDatetime(UUID negotiationId, Boolean status) throws CantUpdateCustomerBrokerSaleException {
         // TODO: metodo para actualizar el nuevo campo NearExpirationDatetime
     }
 

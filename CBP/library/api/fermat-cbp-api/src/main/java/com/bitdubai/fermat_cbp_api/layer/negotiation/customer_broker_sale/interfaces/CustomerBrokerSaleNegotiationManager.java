@@ -53,7 +53,7 @@ public interface CustomerBrokerSaleNegotiationManager extends FermatManager {
      * @param status
      * @throws CantUpdateCustomerBrokerSaleException
      */
-    void updateNegotiationNearExpirationDatetime(String negotiationId, Boolean status) throws CantUpdateCustomerBrokerSaleException;
+    void updateNegotiationNearExpirationDatetime(UUID negotiationId, Boolean status) throws CantUpdateCustomerBrokerSaleException;
 
     /**
      *
