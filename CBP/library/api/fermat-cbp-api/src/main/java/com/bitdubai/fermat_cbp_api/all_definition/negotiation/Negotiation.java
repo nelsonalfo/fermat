@@ -55,8 +55,11 @@ public interface Negotiation {
      */
     NegotiationStatus getStatus();
 
-
-    Integer getNearExpirationDatetime();
+    /**
+     *
+     * @return  a Boolean with NearExpirationDatetime
+     */
+    Boolean getNearExpirationDatetime();
 
     /**
      * @return the clauses that conform this negotiation

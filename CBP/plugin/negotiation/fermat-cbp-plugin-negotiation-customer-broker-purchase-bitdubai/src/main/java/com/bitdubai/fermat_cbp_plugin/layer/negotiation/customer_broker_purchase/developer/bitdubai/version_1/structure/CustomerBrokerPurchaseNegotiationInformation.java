@@ -19,7 +19,7 @@ public class CustomerBrokerPurchaseNegotiationInformation implements CustomerBro
     private final Long   startDataTime;
     private final Long   negotiationExpirationDate;
     private final Collection<Clause> clauses;
-    private final Integer nearExpirationDatetime;
+    private final Boolean nearExpirationDatetime;
     private NegotiationStatus statusNegotiation;
 
     private Long   lastNegotiationUpdateDate;
@@ -34,7 +34,7 @@ public class CustomerBrokerPurchaseNegotiationInformation implements CustomerBro
             Long negotiationExpirationDate,
             NegotiationStatus statusNegotiation,
             Collection<Clause> clauses,
-            Integer nearExpirationDatetime
+            Boolean nearExpirationDatetime
     ){
         this.negotiationId = negotiationId;
         this.publicKeyCustomer = publicKeyCustomer;
@@ -87,7 +87,7 @@ public class CustomerBrokerPurchaseNegotiationInformation implements CustomerBro
     }
 
     @Override
-    public Integer getNearExpirationDatetime() {
+    public Boolean getNearExpirationDatetime() {
         return this.nearExpirationDatetime;
     }
 
