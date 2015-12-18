@@ -17,5 +17,6 @@ public interface Contract {
     long getDateTime();
     ContractStatus getStatus();
     Collection<ContractClause> getContractClause();
+    Integer getNearExpirationDatetime();
 }
 
