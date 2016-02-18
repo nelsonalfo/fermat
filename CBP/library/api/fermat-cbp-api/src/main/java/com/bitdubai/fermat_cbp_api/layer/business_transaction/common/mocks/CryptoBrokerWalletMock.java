@@ -12,7 +12,6 @@ import com.bitdubai.fermat_cbp_api.layer.wallet.crypto_broker.exceptions.CantGet
 import com.bitdubai.fermat_cbp_api.layer.wallet.crypto_broker.exceptions.CantGetCryptoBrokerWalletSettingException;
 import com.bitdubai.fermat_cbp_api.layer.wallet.crypto_broker.exceptions.CantGetStockCryptoBrokerWalletException;
 import com.bitdubai.fermat_cbp_api.layer.wallet.crypto_broker.exceptions.CantGetTransactionCryptoBrokerWalletMatchingException;
-import com.bitdubai.fermat_cbp_api.layer.wallet.crypto_broker.exceptions.CantMarkAsSeenException;
 import com.bitdubai.fermat_cbp_api.layer.wallet.crypto_broker.interfaces.CryptoBrokerStockTransaction;
 import com.bitdubai.fermat_cbp_api.layer.wallet.crypto_broker.interfaces.CryptoBrokerWallet;
 import com.bitdubai.fermat_cbp_api.layer.wallet.crypto_broker.interfaces.FiatIndex;
@@ -53,19 +52,14 @@ public class CryptoBrokerWalletMock implements CryptoBrokerWallet {
     }
 
     /**
-     * This method load the list CryptoBrokerStockTransaction
+     * This method load the update the transaction mark field seen in true
      *
-     * @param transactionId
+     * @param OriginTransactionId
      * @return void
      * @throws CantGetTransactionCryptoBrokerWalletMatchingException
      */
     @Override
-    public void markAsSeen(UUID transactionId) throws CantMarkAsSeenException {
-
-    }
-
-    @Override
-    public void markAsSeen(List<UUID> transactionId) throws CantMarkAsSeenException {
+    public void markAsSeen(String OriginTransactionId) throws CantGetTransactionCryptoBrokerWalletMatchingException {
 
     }
 
@@ -76,7 +70,7 @@ public class CryptoBrokerWalletMock implements CryptoBrokerWallet {
      * @throws CantGetTransactionCryptoBrokerWalletMatchingException
      */
     @Override
-    public List<CurrencyMatching> getCryptoBrokerTransactionCurrencyInputs() throws CantGetTransactionCryptoBrokerWalletMatchingException {
+    public List<CurrencyMatching> getCryptoBrokerTransactionCurrencyMatchings() throws CantGetTransactionCryptoBrokerWalletMatchingException {
         return null;
     }
 }
