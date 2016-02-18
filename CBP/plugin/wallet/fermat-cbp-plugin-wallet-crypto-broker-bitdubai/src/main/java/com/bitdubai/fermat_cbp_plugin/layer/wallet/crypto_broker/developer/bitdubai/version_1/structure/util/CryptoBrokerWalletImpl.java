@@ -54,8 +54,6 @@ import java.util.UUID;
  */
 public class CryptoBrokerWalletImpl implements CryptoBrokerWallet {
 
-    // TODO MAKE USE OF THE ERROR MANAGER, PLEASE.
-
 
     public static final String PATH_DIRECTORY = "cryptobrokerwallet-swap/";
     private static final String CRYPTO_BROKER_WALLET_FILE_NAME = "walletsIds";
@@ -158,35 +156,16 @@ public class CryptoBrokerWalletImpl implements CryptoBrokerWallet {
     /**
      * This method load the list CryptoBrokerStockTransaction
      *
-     * @param transactionId
+     * @param transactionIds
      * @return void
      * @throws CantGetTransactionCryptoBrokerWalletMatchingException
      */
     @Override
-    public void markAsSeen(UUID transactionId) throws CantMarkAsSeenException {
+    public void markAsSeen(List<String> transactionIds) throws CantMarkAsSeenException {
         cryptoBrokerWalletDatabaseDao = new CryptoBrokerWalletDatabaseDao(this.database);
         cryptoBrokerWalletDatabaseDao.setPlugin(this.pluginId);
         cryptoBrokerWalletDatabaseDao.setPluginFileSystem(this.pluginFileSystem);
-        cryptoBrokerWalletDatabaseDao.markAsSeen(transactionId);
-    }
-
-    @Override
-    public void markAsSeen(List<UUID> transactionIds) throws CantMarkAsSeenException {
-
-        try {
-
-            cryptoBrokerWalletDatabaseDao = new CryptoBrokerWalletDatabaseDao(this.database);
-            cryptoBrokerWalletDatabaseDao.markAsSeen(transactionIds);
-
-        } catch (CantMarkAsSeenException cantMarkAsSeenException) {
-
-            //errorManager.reportUnexpectedPluginException();
-            throw cantMarkAsSeenException;
-        } catch (Exception exception) {
-
-            //errorManager.reportUnexpectedPluginException();
-            throw new CantMarkAsSeenException(FermatException.wrapException(exception), "", "Unhandled error.");
-        }
+        cryptoBrokerWalletDatabaseDao.markAsSeen(transactionIds);
     }
 
     /**
