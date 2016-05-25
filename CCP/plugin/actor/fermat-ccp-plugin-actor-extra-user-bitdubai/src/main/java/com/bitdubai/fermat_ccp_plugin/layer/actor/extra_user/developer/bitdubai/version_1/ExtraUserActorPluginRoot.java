@@ -39,7 +39,7 @@ import com.bitdubai.fermat_ccp_plugin.layer.actor.extra_user.developer.bitdubai.
 import com.bitdubai.fermat_ccp_plugin.layer.actor.extra_user.developer.bitdubai.version_1.exceptions.CantLoadPrivateKeyException;
 import com.bitdubai.fermat_pip_api.layer.actor.exception.CantGetDataBaseTool;
 import com.bitdubai.fermat_pip_api.layer.actor.exception.CantGetLogTool;
-import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.ErrorManager;
+
 import com.bitdubai.fermat_ccp_api.layer.actor.extra_user.interfaces.ExtraUserManager;
 import com.bitdubai.fermat_ccp_api.layer.actor.extra_user.exceptions.CantCreateExtraUserException;
 import com.bitdubai.fermat_ccp_api.layer.actor.extra_user.exceptions.CantGetExtraUserException;
@@ -63,7 +63,7 @@ import java.util.regex.Pattern;
  * @version 1.0
  * @since Java JDK 1.7
  */
-@PluginInfo(createdBy = "Natalia Cortez", maintainerMail = "nattyco@gmail.com", platform = Platforms.CRYPTO_CURRENCY_PLATFORM, layer = Layers.DESKTOP_MODULE, plugin = Plugins.WALLET_MANAGER)
+@PluginInfo(createdBy = "Natalia Cortez", maintainerMail = "nattyco@gmail.com", platform = Platforms.CRYPTO_CURRENCY_PLATFORM, layer = Layers.ACTOR, plugin = Plugins.EXTRA_WALLET_USER)
 
 public class ExtraUserActorPluginRoot extends AbstractPlugin implements
         DatabaseManagerForDevelopers,

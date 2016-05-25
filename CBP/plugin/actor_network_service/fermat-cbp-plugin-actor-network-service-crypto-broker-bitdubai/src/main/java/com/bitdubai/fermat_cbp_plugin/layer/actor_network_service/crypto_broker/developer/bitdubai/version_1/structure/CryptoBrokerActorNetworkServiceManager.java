@@ -1,7 +1,6 @@
 package com.bitdubai.fermat_cbp_plugin.layer.actor_network_service.crypto_broker.developer.bitdubai.version_1.structure;
 
-import android.util.Base64;
-
+import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.ErrorManager;
 import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.error_manager.enums.UnexpectedPluginExceptionSeverity;
 import com.bitdubai.fermat_api.layer.all_definition.common.system.utils.PluginVersionReference;
 import com.bitdubai.fermat_api.layer.all_definition.components.enums.PlatformComponentType;
@@ -9,6 +8,7 @@ import com.bitdubai.fermat_api.layer.all_definition.components.interfaces.Platfo
 import com.bitdubai.fermat_api.layer.all_definition.enums.Actors;
 import com.bitdubai.fermat_api.layer.all_definition.exceptions.InvalidParameterException;
 import com.bitdubai.fermat_api.layer.all_definition.network_service.enums.NetworkServiceType;
+import com.bitdubai.fermat_api.layer.all_definition.util.Base64;
 import com.bitdubai.fermat_cbp_api.layer.actor_network_service.crypto_broker.enums.ConnectionRequestAction;
 import com.bitdubai.fermat_cbp_api.layer.actor_network_service.crypto_broker.enums.ProtocolState;
 import com.bitdubai.fermat_cbp_api.layer.actor_network_service.crypto_broker.enums.RequestType;
@@ -61,6 +61,8 @@ public final class CryptoBrokerActorNetworkServiceManager implements CryptoBroke
     private final CommunicationsClientConnection            communicationsClientConnection    ;
     private final CryptoBrokerActorNetworkServiceDao        cryptoBrokerActorNetworkServiceDao;
     private final CryptoBrokerActorNetworkServicePluginRoot pluginRoot                        ;
+    private final ErrorManager                              errorManager                      ;
+    private final PluginVersionReference                    pluginVersionReference            ;
 
     /**
      * Executor
@@ -72,11 +74,14 @@ public final class CryptoBrokerActorNetworkServiceManager implements CryptoBroke
     public CryptoBrokerActorNetworkServiceManager(final CommunicationsClientConnection            communicationsClientConnection    ,
                                                   final CryptoBrokerActorNetworkServiceDao        cryptoBrokerActorNetworkServiceDao,
                                                   final CryptoBrokerActorNetworkServicePluginRoot pluginRoot                        ,
+                                                  final ErrorManager                              errorManager                      ,
                                                   final PluginVersionReference                    pluginVersionReference            ) {
 
         this.communicationsClientConnection     = communicationsClientConnection    ;
         this.cryptoBrokerActorNetworkServiceDao = cryptoBrokerActorNetworkServiceDao;
         this.pluginRoot                         = pluginRoot                        ;
+        this.errorManager                       = errorManager                      ;
+        this.pluginVersionReference             = pluginVersionReference            ;
         this.executorService                    = Executors.newFixedThreadPool(3)   ;
     }
 
@@ -112,12 +117,12 @@ public final class CryptoBrokerActorNetworkServiceManager implements CryptoBroke
 
         } catch (final CantRegisterComponentException e) {
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw new CantExposeIdentityException(e, null, "Problem trying to register an identity component.");
 
         } catch (final Exception e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw new CantExposeIdentityException(e, null, "Unhandled Exception.");
         }
     }
@@ -153,7 +158,7 @@ public final class CryptoBrokerActorNetworkServiceManager implements CryptoBroke
             }
         }catch (Exception e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw new CantExposeIdentityException(e, null, "Unhandled Exception.");
         }
     }
@@ -176,11 +181,11 @@ public final class CryptoBrokerActorNetworkServiceManager implements CryptoBroke
 
         } catch (final CantExposeIdentityException e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw new CantExposeIdentitiesException(e, null, "Problem trying to expose an identity.");
         } catch (final Exception e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw new CantExposeIdentitiesException(e, null, "Unhandled Exception.");
         }
     }
@@ -201,14 +206,14 @@ public final class CryptoBrokerActorNetworkServiceManager implements CryptoBroke
 
             } catch (final CantExposeIdentitiesException e){
 
-                pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+                errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             }
         }
     }
 
     @Override
     public final CryptoBrokerSearch getSearch() {
-        return new CryptoBrokerActorNetworkServiceSearch(communicationsClientConnection, pluginRoot);
+        return new CryptoBrokerActorNetworkServiceSearch(communicationsClientConnection, errorManager, pluginVersionReference);
     }
 
     /**
@@ -243,11 +248,11 @@ public final class CryptoBrokerActorNetworkServiceManager implements CryptoBroke
 
         } catch (final CantRequestConnectionException e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw e;
         } catch (final Exception e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw new CantRequestConnectionException(e, null, "Unhandled Exception.");
         }
     }
@@ -292,11 +297,11 @@ public final class CryptoBrokerActorNetworkServiceManager implements CryptoBroke
 
         } catch (final CantDisconnectException | ConnectionRequestNotFoundException e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw e;
         } catch (final Exception e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw new CantDisconnectException(e, null, "Unhandled Exception.");
         }
     }
@@ -331,11 +336,11 @@ public final class CryptoBrokerActorNetworkServiceManager implements CryptoBroke
 
         } catch (final CantDenyConnectionRequestException | ConnectionRequestNotFoundException e){
             // ConnectionRequestNotFoundException - THIS SHOULD NOT HAPPEN.
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw e;
         } catch (final Exception e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw new CantDenyConnectionRequestException(e, null, "Unhandled Exception.");
         }
     }
@@ -383,11 +388,11 @@ public final class CryptoBrokerActorNetworkServiceManager implements CryptoBroke
 
         } catch (final CantAcceptConnectionRequestException | ConnectionRequestNotFoundException e){
             // ConnectionRequestNotFoundException - THIS SHOULD NOT HAPPEN.
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw e;
         } catch (final Exception e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw new CantAcceptConnectionRequestException(e, null, "Unhandled Exception.");
         }
     }
@@ -407,11 +412,11 @@ public final class CryptoBrokerActorNetworkServiceManager implements CryptoBroke
 
         } catch (final CantListPendingConnectionRequestsException e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw e;
         } catch (final Exception e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw new CantListPendingConnectionRequestsException(e, null, "Unhandled Exception.");
         }
     }
@@ -431,11 +436,11 @@ public final class CryptoBrokerActorNetworkServiceManager implements CryptoBroke
 
         } catch (final CantListPendingConnectionRequestsException e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw e;
         } catch (final Exception e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw new CantListPendingConnectionRequestsException(e, null, "Unhandled Exception.");
         }
     }
@@ -474,11 +479,11 @@ public final class CryptoBrokerActorNetworkServiceManager implements CryptoBroke
 
         } catch (final CantRequestQuotesException e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw e;
         } catch (final Exception e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw new CantRequestQuotesException(e, null, "Unhandled Exception.");
         }
     }
@@ -492,11 +497,11 @@ public final class CryptoBrokerActorNetworkServiceManager implements CryptoBroke
 
         } catch (final CantListPendingQuotesRequestsException e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw e;
         } catch (final Exception e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw new CantListPendingQuotesRequestsException(e, null, "Unhandled Exception.");
         }
     }
@@ -528,11 +533,11 @@ public final class CryptoBrokerActorNetworkServiceManager implements CryptoBroke
 
         } catch (final QuotesRequestNotFoundException | CantAnswerQuotesRequestException e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw e;
         } catch (final Exception e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw new CantAnswerQuotesRequestException(e, null, "Unhandled Exception.");
         }
     }
@@ -546,15 +551,15 @@ public final class CryptoBrokerActorNetworkServiceManager implements CryptoBroke
 
         } catch (final QuotesRequestNotFoundException e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw e;
         } catch (final CantConfirmQuotesRequestException e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw new CantConfirmException(e, "", "Error in DAO, trying to confirm the quotes request.");
         } catch (final Exception e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw new CantConfirmException(e, null, "Unhandled Exception.");
         }
     }
@@ -568,15 +573,15 @@ public final class CryptoBrokerActorNetworkServiceManager implements CryptoBroke
 
         } catch (final ConnectionRequestNotFoundException e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw e;
         } catch (final CantConfirmConnectionRequestException e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw new CantConfirmException(e, "", "Error in DAO, trying to confirm the request.");
         } catch (final Exception e){
 
-            pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+            errorManager.reportUnexpectedPluginException(this.pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
             throw new CantConfirmException(e, null, "Unhandled Exception.");
         }
     }
@@ -606,7 +611,7 @@ public final class CryptoBrokerActorNetworkServiceManager implements CryptoBroke
                             jsonMessage
                     );
                 } catch (CantSendMessageException | InvalidParameterException e) {
-                    pluginRoot.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
+                    errorManager.reportUnexpectedPluginException(pluginVersionReference, UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
                 }
             }
         });

@@ -1,7 +1,6 @@
 package com.bitdubai.reference_niche_wallet.loss_protected_wallet.common.contacts_list_adapter;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,15 +60,12 @@ public class WalletContactListAdapter extends ArrayAdapter<WalletContact> {
                     if (contact.profileImage.length > 0) {
                         contact_profile_image.setImageDrawable(ImagesUtils.getRoundedBitmap(getContext().getResources(), contact.profileImage));
                     } else
-                     //   contact_profile_image.setImageDrawable(ImagesUtils.getRoundedBitmap(getContext().getResources(), R.drawable.ic_profile_male));
                     Picasso.with(getContext()).load(R.drawable.ic_profile_male).transform(new CircleTransform()).into(contact_profile_image);
                 } else
                     Picasso.with(getContext()).load(R.drawable.ic_profile_male).transform(new CircleTransform()).into(contact_profile_image);
-                    //contact_profile_image.setImageDrawable(ImagesUtils.getRoundedBitmap(getContext().getResources(), R.drawable.ic_profile_male));
-            }catch (Exception e){
+               }catch (Exception e){
                 Picasso.with(getContext()).load(R.drawable.ic_profile_male).transform(new CircleTransform()).into(contact_profile_image);
-                //contact_profile_image.setImageDrawable(ImagesUtils.getRoundedBitmap(getContext().getResources(), R.drawable.ic_profile_male));
-            }
+        }
         }
         return v;
     }

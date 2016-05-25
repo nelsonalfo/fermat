@@ -3,7 +3,6 @@ package com.bitdubai.fermat_cbp_plugin.layer.business_transaction.broker_submit_
 import com.bitdubai.fermat_api.CantStartAgentException;
 import com.bitdubai.fermat_api.DealsWithPluginIdentity;
 import com.bitdubai.fermat_api.FermatException;
-import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.error_manager.enums.UnexpectedPluginExceptionSeverity;
 import com.bitdubai.fermat_api.layer.all_definition.components.enums.PlatformComponentType;
 import com.bitdubai.fermat_api.layer.all_definition.enums.Actors;
 import com.bitdubai.fermat_api.layer.all_definition.enums.CryptoCurrency;
@@ -46,7 +45,9 @@ import com.bitdubai.fermat_cbp_api.layer.contract.customer_broker_purchase.excep
 import com.bitdubai.fermat_cbp_api.layer.contract.customer_broker_purchase.exceptions.CantUpdateCustomerBrokerContractPurchaseException;
 import com.bitdubai.fermat_cbp_api.layer.contract.customer_broker_purchase.interfaces.CustomerBrokerContractPurchase;
 import com.bitdubai.fermat_cbp_api.layer.contract.customer_broker_purchase.interfaces.CustomerBrokerContractPurchaseManager;
+import com.bitdubai.fermat_cbp_api.layer.contract.customer_broker_sale.exceptions.CantGetListCustomerBrokerContractSaleException;
 import com.bitdubai.fermat_cbp_api.layer.contract.customer_broker_sale.exceptions.CantUpdateCustomerBrokerContractSaleException;
+import com.bitdubai.fermat_cbp_api.layer.contract.customer_broker_sale.interfaces.CustomerBrokerContractSale;
 import com.bitdubai.fermat_cbp_api.layer.contract.customer_broker_sale.interfaces.CustomerBrokerContractSaleManager;
 import com.bitdubai.fermat_cbp_api.layer.network_service.transaction_transmission.exceptions.CantConfirmNotificationReceptionException;
 import com.bitdubai.fermat_cbp_api.layer.network_service.transaction_transmission.exceptions.CantSendContractNewStatusNotificationException;
@@ -65,6 +66,12 @@ import com.bitdubai.fermat_ccp_api.layer.crypto_transaction.outgoing_intra_actor
 import com.bitdubai.fermat_ccp_api.layer.crypto_transaction.outgoing_intra_actor.exceptions.OutgoingIntraActorInsufficientFundsException;
 import com.bitdubai.fermat_ccp_api.layer.crypto_transaction.outgoing_intra_actor.interfaces.IntraActorCryptoTransactionManager;
 import com.bitdubai.fermat_ccp_api.layer.crypto_transaction.outgoing_intra_actor.interfaces.OutgoingIntraActorManager;
+import com.bitdubai.fermat_ccp_api.layer.identity.intra_user.exceptions.CantListIntraWalletUsersException;
+import com.bitdubai.fermat_ccp_api.layer.identity.intra_user.interfaces.IntraWalletUserIdentityManager;
+import com.bitdubai.fermat_ccp_api.layer.module.intra_user_identity.exceptions.CantGetIntraUserIdentityException;
+import com.bitdubai.fermat_pip_api.layer.platform_service.error_manager.DealsWithErrors;
+import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.error_manager.enums.UnexpectedPluginExceptionSeverity;
+import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.ErrorManager;
 import com.bitdubai.fermat_pip_api.layer.platform_service.event_manager.interfaces.DealsWithEvents;
 import com.bitdubai.fermat_pip_api.layer.platform_service.event_manager.interfaces.EventManager;
 
@@ -80,6 +87,7 @@ public class BrokerSubmitOnlineMerchandiseMonitorAgent implements
         CBPTransactionAgent,
         DealsWithLogger,
         DealsWithEvents,
+        DealsWithErrors,
         DealsWithPluginDatabaseSystem,
         DealsWithPluginIdentity {
 
@@ -88,7 +96,7 @@ public class BrokerSubmitOnlineMerchandiseMonitorAgent implements
     Thread agentThread;
     LogManager logManager;
     EventManager eventManager;
-    BrokerSubmitOnlineMerchandisePluginRoot pluginRoot;
+    ErrorManager errorManager;
     PluginDatabaseSystem pluginDatabaseSystem;
     UUID pluginId;
     TransactionTransmissionManager transactionTransmissionManager;
@@ -97,22 +105,22 @@ public class BrokerSubmitOnlineMerchandiseMonitorAgent implements
     IntraActorCryptoTransactionManager intraActorCryptoTransactionManager;
     OutgoingIntraActorManager outgoingIntraActorManager;
     CryptoMoneyDestockManager cryptoMoneyDeStockManager;
+    IntraWalletUserIdentityManager intraWalletUserIdentityManager;
 
     public BrokerSubmitOnlineMerchandiseMonitorAgent(
             PluginDatabaseSystem pluginDatabaseSystem,
             LogManager logManager,
-            BrokerSubmitOnlineMerchandisePluginRoot pluginRoot,
+            ErrorManager errorManager,
             EventManager eventManager,
             UUID pluginId,
             TransactionTransmissionManager transactionTransmissionManager,
             CustomerBrokerContractPurchaseManager customerBrokerContractPurchaseManager,
             CustomerBrokerContractSaleManager customerBrokerContractSaleManager,
             OutgoingIntraActorManager outgoingIntraActorManager,
-            CryptoMoneyDestockManager cryptoMoneyDeStockManager) throws CantSetObjectException {
-        
+            CryptoMoneyDestockManager cryptoMoneyDeStockManager,IntraWalletUserIdentityManager intraWalletUserIdentityManager) throws CantSetObjectException {
         this.eventManager = eventManager;
         this.pluginDatabaseSystem = pluginDatabaseSystem;
-        this.pluginRoot = pluginRoot;
+        this.errorManager = errorManager;
         this.pluginId = pluginId;
         this.logManager = logManager;
         this.transactionTransmissionManager = transactionTransmissionManager;
@@ -121,6 +129,7 @@ public class BrokerSubmitOnlineMerchandiseMonitorAgent implements
         this.customerBrokerContractSaleManager = customerBrokerContractSaleManager;
         this.cryptoMoneyDeStockManager = cryptoMoneyDeStockManager;
         setIntraActorCryptoTransactionManager(outgoingIntraActorManager);
+        this.intraWalletUserIdentityManager=intraWalletUserIdentityManager;
     }
 
     private void setIntraActorCryptoTransactionManager(
@@ -143,18 +152,21 @@ public class BrokerSubmitOnlineMerchandiseMonitorAgent implements
 
         //Logger LOG = Logger.getGlobal();
         //LOG.info("Customer online payment monitor agent starting");
-        monitorAgent = new MonitorAgent(pluginRoot);
+        monitorAgent = new MonitorAgent();
 
         this.monitorAgent.setPluginDatabaseSystem(this.pluginDatabaseSystem);
+        this.monitorAgent.setErrorManager(this.errorManager);
 
         try {
             this.monitorAgent.Initialize();
         } catch (CantInitializeCBPAgent exception) {
-            pluginRoot.reportError(
+            errorManager.reportUnexpectedPluginException(
+                    Plugins.BROKER_SUBMIT_ONLINE_MERCHANDISE,
                     UnexpectedPluginExceptionSeverity.DISABLES_THIS_PLUGIN,
                     exception);
         } catch (Exception exception) {
-            this.pluginRoot.reportError(
+            this.errorManager.reportUnexpectedPluginException(
+                    Plugins.BROKER_SUBMIT_ONLINE_MERCHANDISE,
                     UnexpectedPluginExceptionSeverity.DISABLES_THIS_PLUGIN,
                     FermatException.wrapException(exception));
         }
@@ -169,10 +181,16 @@ public class BrokerSubmitOnlineMerchandiseMonitorAgent implements
         try {
             this.agentThread.interrupt();
         } catch (Exception exception) {
-            this.pluginRoot.reportError(
+            this.errorManager.reportUnexpectedPluginException(
+                    Plugins.BROKER_SUBMIT_ONLINE_MERCHANDISE,
                     UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN,
                     FermatException.wrapException(exception));
         }
+    }
+
+    @Override
+    public void setErrorManager(ErrorManager errorManager) {
+        this.errorManager = errorManager;
     }
 
     @Override
@@ -199,17 +217,18 @@ public class BrokerSubmitOnlineMerchandiseMonitorAgent implements
      * Private class which implements runnable and is started by the Agent
      * Based on MonitorAgent created by Rodrigo Acosta
      */
-    private class MonitorAgent implements DealsWithPluginDatabaseSystem,  Runnable {
+    private class MonitorAgent implements DealsWithPluginDatabaseSystem, DealsWithErrors, Runnable {
 
-        BrokerSubmitOnlineMerchandisePluginRoot pluginRoot;
+        ErrorManager errorManager;
         PluginDatabaseSystem pluginDatabaseSystem;
         public final int SLEEP_TIME = 5000;
         int iterationNumber = 0;
         BrokerSubmitOnlineMerchandiseBusinessTransactionDao brokerSubmitOnlineMerchandiseBusinessTransactionDao;
         boolean threadWorking;
 
-        public MonitorAgent(BrokerSubmitOnlineMerchandisePluginRoot pluginRoot) {
-            this.pluginRoot = pluginRoot;
+        @Override
+        public void setErrorManager(ErrorManager errorManager) {
+            this.errorManager = errorManager;
         }
 
         @Override
@@ -242,8 +261,8 @@ public class BrokerSubmitOnlineMerchandiseMonitorAgent implements
                     logManager.log(BrokerSubmitOnlineMerchandisePluginRoot.getLogLevelByClass(this.getClass().getName()), "Iteration number " + iterationNumber, null, null);
                     doTheMainTask();
                 } catch (Exception e) {
-                    pluginRoot.reportError(
-                            
+                    errorManager.reportUnexpectedPluginException(
+                            Plugins.BROKER_SUBMIT_ONLINE_MERCHANDISE,
                             UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN,
                             e);
                 }
@@ -267,8 +286,8 @@ public class BrokerSubmitOnlineMerchandiseMonitorAgent implements
                     database = brokerSubmitOnlineMerchandiseBusinessTransactionDatabaseFactory.createDatabase(pluginId,
                             BrokerSubmitOnlineMerchandiseBusinessTransactionDatabaseConstants.DATABASE_NAME);
                 } catch (CantCreateDatabaseException cantCreateDatabaseException) {
-                    pluginRoot.reportError(
-                            
+                    errorManager.reportUnexpectedPluginException(
+                            Plugins.BROKER_SUBMIT_ONLINE_MERCHANDISE,
                             UnexpectedPluginExceptionSeverity.DISABLES_THIS_PLUGIN,
                             cantCreateDatabaseException);
                     throw new CantInitializeCBPAgent(cantCreateDatabaseException,
@@ -276,8 +295,8 @@ public class BrokerSubmitOnlineMerchandiseMonitorAgent implements
                             "Please, check the cause");
                 }
             } catch (CantOpenDatabaseException exception) {
-                pluginRoot.reportError(
-                        
+                errorManager.reportUnexpectedPluginException(
+                        Plugins.BROKER_SUBMIT_ONLINE_MERCHANDISE,
                         UnexpectedPluginExceptionSeverity.DISABLES_THIS_PLUGIN,
                         exception);
                 throw new CantInitializeCBPAgent(exception,
@@ -289,7 +308,7 @@ public class BrokerSubmitOnlineMerchandiseMonitorAgent implements
         private void doTheMainTask() throws CannotSendContractHashException, CantUpdateRecordException, CantSendContractNewStatusNotificationException, CantCreateCryptoMoneyDestockException, CantConfirmNotificationReceptionException {
 
             try {
-                brokerSubmitOnlineMerchandiseBusinessTransactionDao = new BrokerSubmitOnlineMerchandiseBusinessTransactionDao(pluginDatabaseSystem, pluginId, database, pluginRoot);
+                brokerSubmitOnlineMerchandiseBusinessTransactionDao = new BrokerSubmitOnlineMerchandiseBusinessTransactionDao(pluginDatabaseSystem, pluginId, database, errorManager);
 
                 UUID outgoingCryptoTransactionId;
                 BusinessTransactionRecord businessTransactionRecord;
@@ -328,12 +347,15 @@ public class BrokerSubmitOnlineMerchandiseMonitorAgent implements
                 for (String pendingContractHash : pendingToSubmitCrypto) {
                     businessTransactionRecord = brokerSubmitOnlineMerchandiseBusinessTransactionDao.getBrokerBusinessTransactionRecord(pendingContractHash);
 
+                    System.out.println("*************************************************************************************************");
+                    System.out.println("BROKER_SUBMIT_ONLINE_MERCHANDISE - SENDING CRYPTO TRANSFER USING INTRA_ACTOR_TRANSACTION_MANAGER");
+                    System.out.println("*************************************************************************************************");
                     outgoingCryptoTransactionId = intraActorCryptoTransactionManager.sendCrypto(
                             businessTransactionRecord.getExternalWalletPublicKey(),
                             businessTransactionRecord.getCryptoAddress(),
                             businessTransactionRecord.getCryptoAmount(),
                             "Payment from Crypto Customer contract " + pendingContractHash,
-                            businessTransactionRecord.getBrokerPublicKey(),
+                            intraWalletUserIdentityManager.getAllIntraWalletUsersFromCurrentDeviceUser().get(0).getPublicKey(),
                             businessTransactionRecord.getActorPublicKey(),
                             Actors.CBP_CRYPTO_BROKER,
                             Actors.INTRA_USER,
@@ -442,6 +464,9 @@ public class BrokerSubmitOnlineMerchandiseMonitorAgent implements
                     checkPendingEvent(eventId);
                 }
 
+            } catch (CantListIntraWalletUsersException e) {
+                throw new CannotSendContractHashException(e, "Sending contract hash", "cannot get list of intra users");
+
             } catch (UnexpectedResultReturnedFromDatabaseException e) {
                 throw new CannotSendContractHashException(e, "Sending contract hash", "Unexpected result in database");
 
@@ -451,7 +476,7 @@ public class BrokerSubmitOnlineMerchandiseMonitorAgent implements
 
             } catch (OutgoingIntraActorInsufficientFundsException | OutgoingIntraActorCantSendFundsExceptions e) {
                 //TODO: I want to get a better handler for this exception
-                pluginRoot.reportError(
+                errorManager.reportUnexpectedPluginException(Plugins.BROKER_SUBMIT_ONLINE_MERCHANDISE,
                         UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
 
             } catch (OutgoingIntraActorCantGetCryptoStatusException e) {
@@ -509,7 +534,7 @@ public class BrokerSubmitOnlineMerchandiseMonitorAgent implements
 
             } catch (OutgoingIntraActorCantGetSendCryptoTransactionHashException | OutgoingIntraActorCantGetCryptoStatusException e) {
                 //I want to know a better way to handle with this exception, for now I going to print the exception and return this method.
-                pluginRoot.reportError(
+                errorManager.reportUnexpectedPluginException(Plugins.BROKER_SUBMIT_ONLINE_MERCHANDISE,
                         UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, e);
 
             } catch (UnexpectedResultReturnedFromDatabaseException e) {
@@ -542,11 +567,12 @@ public class BrokerSubmitOnlineMerchandiseMonitorAgent implements
                             } else {
                                 CustomerBrokerContractPurchase contractPurchase = customerBrokerContractPurchaseManager.getCustomerBrokerContractPurchaseForContractId(contractHash);
                                 ObjectChecker.checkArgument(contractPurchase); //If the contract is null, I cannot handle with this situation
-
-                                brokerSubmitOnlineMerchandiseBusinessTransactionDao.persistContractInDatabase(contractPurchase);
-                                brokerSubmitOnlineMerchandiseBusinessTransactionDao.setCompletionDateByContractHash(contractHash, (new Date()).getTime());
-                                customerBrokerContractPurchaseManager.updateStatusCustomerBrokerPurchaseContractStatus(contractHash, ContractStatus.MERCHANDISE_SUBMIT);
-                                raisePaymentConfirmationEvent(contractHash);
+                                if(!contractPurchase.getStatus().getCode().equals(ContractStatus.COMPLETED)){
+                                    brokerSubmitOnlineMerchandiseBusinessTransactionDao.persistContractInDatabase(contractPurchase);
+                                    brokerSubmitOnlineMerchandiseBusinessTransactionDao.setCompletionDateByContractHash(contractHash, (new Date()).getTime());
+                                    customerBrokerContractPurchaseManager.updateStatusCustomerBrokerPurchaseContractStatus(contractHash, ContractStatus.MERCHANDISE_SUBMIT);
+                                    raisePaymentConfirmationEvent(contractHash);
+                                }
                             }
                             transactionTransmissionManager.confirmReception(record.getTransactionID());
                         }
@@ -567,11 +593,15 @@ public class BrokerSubmitOnlineMerchandiseMonitorAgent implements
                                 contractTransactionStatus = businessTransactionRecord.getContractTransactionStatus();
 
                                 if (contractTransactionStatus.getCode().equals(ContractTransactionStatus.ONLINE_MERCHANDISE_SUBMITTED.getCode())) {
-                                    businessTransactionRecord.setContractTransactionStatus(ContractTransactionStatus.CONFIRM_ONLINE_CONSIGNMENT);
-                                    brokerSubmitOnlineMerchandiseBusinessTransactionDao.updateBusinessTransactionRecord(businessTransactionRecord);
-                                    brokerSubmitOnlineMerchandiseBusinessTransactionDao.setCompletionDateByContractHash(contractHash, (new Date()).getTime());
-                                    customerBrokerContractSaleManager.updateStatusCustomerBrokerSaleContractStatus(contractHash, ContractStatus.MERCHANDISE_SUBMIT);
-                                    raisePaymentConfirmationEvent(contractHash);
+                                    CustomerBrokerContractSale contractSale= customerBrokerContractSaleManager.getCustomerBrokerContractSaleForContractId(contractHash);
+                                    ObjectChecker.checkArgument(contractSale);
+                                    if(!contractSale.getStatus().getCode().equals(ContractStatus.COMPLETED)){
+                                        businessTransactionRecord.setContractTransactionStatus(ContractTransactionStatus.CONFIRM_ONLINE_CONSIGNMENT);
+                                        brokerSubmitOnlineMerchandiseBusinessTransactionDao.updateBusinessTransactionRecord(businessTransactionRecord);
+                                        brokerSubmitOnlineMerchandiseBusinessTransactionDao.setCompletionDateByContractHash(contractHash, (new Date()).getTime());
+                                        customerBrokerContractSaleManager.updateStatusCustomerBrokerSaleContractStatus(contractHash, ContractStatus.MERCHANDISE_SUBMIT);
+                                        raisePaymentConfirmationEvent(contractHash);
+                                    }
                                 }
                             }
                             transactionTransmissionManager.confirmReception(record.getTransactionID());
@@ -581,6 +611,8 @@ public class BrokerSubmitOnlineMerchandiseMonitorAgent implements
                 }
 
                 //TODO: look a better way to deal with this exceptions
+            } catch (CantGetListCustomerBrokerContractSaleException exception) {
+                throw new UnexpectedResultReturnedFromDatabaseException(exception, "Checking pending events", "Cannot get sale contract");
             } catch (CantUpdateRecordException exception) {
                 throw new UnexpectedResultReturnedFromDatabaseException(exception, "Checking pending events", "Cannot update the database");
             } catch (CantConfirmTransactionException exception) {
