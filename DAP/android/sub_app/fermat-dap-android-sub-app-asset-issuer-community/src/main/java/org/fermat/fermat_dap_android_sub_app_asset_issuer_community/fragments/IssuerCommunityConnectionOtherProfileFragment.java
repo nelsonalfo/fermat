@@ -173,31 +173,31 @@ public class IssuerCommunityConnectionOtherProfileFragment extends AbstractFerma
         if (i == R.id.btn_conect) {
 //            Toast.makeText(getActivity(), "Fixing for your convenience.", Toast.LENGTH_SHORT).show();
 
-            //CommonLogger.info(TAG, "User connection state " + actorIssuer.getConnectionState());
+            //CommonLogger.info(TAG, "User connection state " + actorIssuer.getStatus());
 //            try {
-                ConnectDialog connectDialog = new ConnectDialog(getActivity(),
-                        (AssetIssuerCommunitySubAppSession) appSession,
-                        null,
-                        actorIssuer,
-                        null);
+            ConnectDialog connectDialog = new ConnectDialog(getActivity(),
+                    (AssetIssuerCommunitySubAppSession) appSession,
+                    null,
+                    actorIssuer,
+                    null);
 
-                connectDialog.setTitle(R.string.connection_request_title);
-                connectDialog.setDescription("Do you want to send ");
-                connectDialog.setUsername(actorIssuer.getRecord().getName());
-                connectDialog.setSecondDescription("a connection request");
-                connectDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        updateButton();
-                    }
-                });
-                connectDialog.show();
+            connectDialog.setTitle(R.string.connection_request_title);
+            connectDialog.setDescription("Do you want to send ");
+            connectDialog.setUsername(actorIssuer.getRecord().getName());
+            connectDialog.setSecondDescription("a connection request");
+            connectDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    updateButton();
+                }
+            });
+            connectDialog.show();
 //            } catch (CantGetIdentityAssetIssuerException e) {
 //                e.printStackTrace();
 //            }
         }
         /*if (i == R.id.btn_disconect) {
-            //CommonLogger.info(TAG, "User connection state " + actorIssuer.getConnectionState());
+            //CommonLogger.info(TAG, "User connection state " + actorIssuer.getStatus());
             final DisconectDialog disconectDialog;
             try {
                 disconectDialog = new DisconectDialog(getActivity(), (AssetIssuerCommunitySubAppSession) appSession, null, actorIssuer, moduleManager.getActiveAssetIssuerIdentity());
@@ -239,32 +239,32 @@ public class IssuerCommunityConnectionOtherProfileFragment extends AbstractFerma
         }
         if (i == R.id.btn_connection_cancel) {
 //            try {
-                CancelDialog cancelDialog = new CancelDialog(getActivity(),
-                        (AssetIssuerCommunitySubAppSession) appSession,
-                        null,
-                        actorIssuer,
-                        null);
+            CancelDialog cancelDialog = new CancelDialog(getActivity(),
+                    (AssetIssuerCommunitySubAppSession) appSession,
+                    null,
+                    actorIssuer,
+                    null);
 
-                cancelDialog.setTitle("Cancel Request");
-                cancelDialog.setDescription("Want to cancel the request to");
-                cancelDialog.setUsername(actorIssuer.getRecord().getName());
-                cancelDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        updateButton();
-                    }
-                });
-                cancelDialog.show();
+            cancelDialog.setTitle("Cancel Request");
+            cancelDialog.setDescription("Want to cancel the request to");
+            cancelDialog.setUsername(actorIssuer.getRecord().getName());
+            cancelDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    updateButton();
+                }
+            });
+            cancelDialog.show();
 //            } catch (CantGetIdentityAssetIssuerException e) {
 //                e.printStackTrace();
 //            }
         }
         if (i == R.id.btn_connection_request_send) {
-            //CommonLogger.info(TAG, "User connection state " + actorIssuer.getConnectionState());
+            //CommonLogger.info(TAG, "User connection state " + actorIssuer.getStatus());
             Toast.makeText(getActivity(), R.string.connection_request, Toast.LENGTH_SHORT).show();
         }
         if (i == R.id.btn_connection_request_reject) {
-            // CommonLogger.info(TAG, "User connection state " + actorIssuer.getConnectionState());
+            // CommonLogger.info(TAG, "User connection state " + actorIssuer.getStatus());
             Toast.makeText(getActivity(), R.string.connection_rejected, Toast.LENGTH_SHORT).show();
         }
     }

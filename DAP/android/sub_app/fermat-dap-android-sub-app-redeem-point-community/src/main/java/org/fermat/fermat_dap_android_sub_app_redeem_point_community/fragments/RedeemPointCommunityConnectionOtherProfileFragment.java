@@ -192,50 +192,50 @@ public class RedeemPointCommunityConnectionOtherProfileFragment extends Abstract
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.btn_conect) {
-            //CommonLogger.info(TAG, "User connection state " + actorRedeem.getConnectionState());
+            //CommonLogger.info(TAG, "User connection state " + actorRedeem.getStatus());
 //            try {
-                ConnectDialog connectDialog = new ConnectDialog(getActivity(),
-                        (AssetRedeemPointCommunitySubAppSession) appSession,
-                        null,
-                        actorRedeem,
-                        null);
+            ConnectDialog connectDialog = new ConnectDialog(getActivity(),
+                    (AssetRedeemPointCommunitySubAppSession) appSession,
+                    null,
+                    actorRedeem,
+                    null);
 
-                connectDialog.setTitle("Connection Request");
-                connectDialog.setDescription("Do you want to send ");
-                connectDialog.setUsername(actorRedeem.getName());
-                connectDialog.setSecondDescription("a connection request");
-                connectDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        updateButton();
-                    }
-                });
-                connectDialog.show();
+            connectDialog.setTitle("Connection Request");
+            connectDialog.setDescription("Do you want to send ");
+            connectDialog.setUsername(actorRedeem.getName());
+            connectDialog.setSecondDescription("a connection request");
+            connectDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    updateButton();
+                }
+            });
+            connectDialog.show();
 //            } catch (CantGetIdentityRedeemPointException e) {
 //                e.printStackTrace();
 //            }
         }
 
         if (i == R.id.btn_disconect) {
-            //CommonLogger.info(TAG, "User connection state " + actorRedeem.getConnectionState());
+            //CommonLogger.info(TAG, "User connection state " + actorRedeem.getStatus());
 //            try {
-                final DisconnectDialog disconnectDialog = new DisconnectDialog(getActivity(),
-                        (AssetRedeemPointCommunitySubAppSession) appSession,
-                        null,
-                        actorRedeem,
-                        null);
+            final DisconnectDialog disconnectDialog = new DisconnectDialog(getActivity(),
+                    (AssetRedeemPointCommunitySubAppSession) appSession,
+                    null,
+                    actorRedeem,
+                    null);
 
-                disconnectDialog.setTitle("Disconnect");
-                disconnectDialog.setDescription("Want to disconnect from");
-                disconnectDialog.setUsername(actorRedeem.getName());
-                disconnectDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        //connectRequest();
-                        updateButton();
-                    }
-                });
-                disconnectDialog.show();
+            disconnectDialog.setTitle("Disconnect");
+            disconnectDialog.setDescription("Want to disconnect from");
+            disconnectDialog.setUsername(actorRedeem.getName());
+            disconnectDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    //connectRequest();
+                    updateButton();
+                }
+            });
+            disconnectDialog.show();
 //            } catch (CantGetIdentityRedeemPointException e) {
 //                e.printStackTrace();
 //            }
@@ -263,33 +263,33 @@ public class RedeemPointCommunityConnectionOtherProfileFragment extends Abstract
 
         if (i == R.id.btn_connection_cancel) {
 //            try {
-                CancelDialog cancelDialog = new CancelDialog(getActivity(),
-                        (AssetRedeemPointCommunitySubAppSession) appSession,
-                        null,
-                        actorRedeem,
-                        null);
+            CancelDialog cancelDialog = new CancelDialog(getActivity(),
+                    (AssetRedeemPointCommunitySubAppSession) appSession,
+                    null,
+                    actorRedeem,
+                    null);
 
-                cancelDialog.setTitle("Cancel Request");
-                cancelDialog.setDescription("Want to cancel the request to");
-                cancelDialog.setUsername(actorRedeem.getName());
-                cancelDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        updateButton();
-                    }
-                });
-                cancelDialog.show();
+            cancelDialog.setTitle("Cancel Request");
+            cancelDialog.setDescription("Want to cancel the request to");
+            cancelDialog.setUsername(actorRedeem.getName());
+            cancelDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    updateButton();
+                }
+            });
+            cancelDialog.show();
 //            } catch (CantGetIdentityRedeemPointException e) {
 //                e.printStackTrace();
 //            }
         }
 
         if (i == R.id.btn_connection_request_send) {
-            //CommonLogger.info(TAG, "User connection state " + actorRedeem.getConnectionState());
+            //CommonLogger.info(TAG, "User connection state " + actorRedeem.getStatus());
             Toast.makeText(getActivity(), R.string.dap_other_profile_request_send_toast, Toast.LENGTH_SHORT).show();
         }
         if (i == R.id.btn_connection_request_reject) {
-            // CommonLogger.info(TAG, "User connection state " + actorRedeem.getConnectionState());
+            // CommonLogger.info(TAG, "User connection state " + actorRedeem.getStatus());
             Toast.makeText(getActivity(), R.string.dap_other_profile_request_reject_toast, Toast.LENGTH_SHORT).show();
         }
     }
