@@ -142,7 +142,17 @@ public class CryptoCustomerIdentityPluginRoot extends AbstractPlugin implements 
             cryptoCustomerIdentityDatabaseDao.createNewCryptoCustomerIdentity(cryptoCustomer, keyPair.getPrivateKey(), loggedUser, accuracy, frequency);
 
             broadcaster.publish(BroadcasterType.UPDATE_VIEW, "cambios_en_el_identity_customer_creado");
-
+            //Updated by Manuel
+            //Exposing identity when is created.
+            CryptoCustomerExposingData cryptoCustomerExposingData = new CryptoCustomerExposingData(
+                    cryptoCustomer.getPublicKey(),
+                    cryptoCustomer.getAlias(),
+                    cryptoCustomer.getProfileImage(),
+                    locationManager.getLocation(),
+                    cryptoCustomer.getFrequency().getRefreshInterval(),
+                    0);
+            cryptoCustomerANSManager.exposeIdentity(cryptoCustomerExposingData);
+            //End of update
             return cryptoCustomer;
 
         } catch (CantGetLoggedInDeviceUserException e) {
