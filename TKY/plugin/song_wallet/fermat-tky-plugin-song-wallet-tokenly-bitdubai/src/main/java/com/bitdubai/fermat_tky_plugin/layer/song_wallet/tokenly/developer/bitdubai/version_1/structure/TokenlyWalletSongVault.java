@@ -64,9 +64,9 @@ public class TokenlyWalletSongVault {
     private final String DIRECTORY_NAME = "tokenly-wallet-song";
     /**
      * Represents the file privacy.
-     * TODO: for testing, I'll put this as public file.
+     * TODO: for testing, I'll put this as private file.
      */
-    private final FilePrivacy FILE_PRIVACY = FilePrivacy.PUBLIC;
+    private final FilePrivacy FILE_PRIVACY = FilePrivacy.PRIVATE;
 
     /**
      * Represents the file life span.
@@ -201,7 +201,7 @@ public class TokenlyWalletSongVault {
                     fermatBundle.put(BroadcasterNotificationType.SONG_ID.getCode(), songId);
                     fermatBundle.put(BroadcasterNotificationType.FAN_WALLET_BROADCAST_NOTIFICATION.getCode(),
                             BroadcasterNotificationType.FAN_WALLET_BROADCAST_NOTIFICATION.getCode());
-                    broadcaster.publish(BroadcasterType.UPDATE_VIEW, fermatBundle);
+                    broadcaster.publish(BroadcasterType.UPDATE_VIEW, fermatBundle,"acá va el chanell en un futuro o reestructuralo para la pk de la app");
                     throw new CancelDownloadException();
                 }
                 for(byte byteRead : data){
@@ -219,7 +219,7 @@ public class TokenlyWalletSongVault {
                     fermatBundle.put(BroadcasterNotificationType.FAN_WALLET_BROADCAST_NOTIFICATION.getCode(),
                             BroadcasterNotificationType.FAN_WALLET_BROADCAST_NOTIFICATION.getCode());
                     try {
-                        broadcaster.publish(BroadcasterType.UPDATE_VIEW, fermatBundle);
+                        broadcaster.publish(BroadcasterType.UPDATE_VIEW, fermatBundle,"acá va el chanell en un futuro o reestructuralo para la pk de la app");
                     }catch (Exception ex){
                         System.out.println("TKY_BROADCAST_PERCENTAGE:"+ex);
                     }
@@ -255,7 +255,7 @@ public class TokenlyWalletSongVault {
             fermatBundle.put(BroadcasterNotificationType.FAN_WALLET_BROADCAST_NOTIFICATION.getCode(),
                     BroadcasterNotificationType.FAN_WALLET_BROADCAST_NOTIFICATION.getCode());
             try {
-                broadcaster.publish(BroadcasterType.UPDATE_VIEW, fermatBundle);
+                broadcaster.publish(BroadcasterType.UPDATE_VIEW, fermatBundle,"acá va el chanell en un futuro o reestructuralo para la pk de la app");
             }catch (Exception ex){
                 System.out.println("TKY_BROADCAST_PERCENTAGE_COMPLETE:"+ex);
             }

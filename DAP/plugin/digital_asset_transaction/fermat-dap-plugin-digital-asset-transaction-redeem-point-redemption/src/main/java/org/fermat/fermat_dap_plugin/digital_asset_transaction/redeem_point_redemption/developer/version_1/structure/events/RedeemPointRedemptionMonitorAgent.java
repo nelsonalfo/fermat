@@ -2,9 +2,7 @@ package org.fermat.fermat_dap_plugin.digital_asset_transaction.redeem_point_rede
 
 import com.bitdubai.fermat_api.Agent;
 import com.bitdubai.fermat_api.CantStartAgentException;
-import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.ErrorManager;
 import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.error_manager.enums.UnexpectedPluginExceptionSeverity;
-import com.bitdubai.fermat_api.layer.all_definition.enums.Plugins;
 import com.bitdubai.fermat_api.layer.all_definition.enums.ServiceStatus;
 import com.bitdubai.fermat_api.layer.all_definition.exceptions.CantSetObjectException;
 import com.bitdubai.fermat_api.layer.all_definition.transaction_transference_protocol.Specialist;
@@ -21,7 +19,8 @@ import com.bitdubai.fermat_api.layer.osa_android.database_system.exceptions.Data
 import com.bitdubai.fermat_api.layer.osa_android.file_system.PluginFileSystem;
 import com.bitdubai.fermat_api.layer.osa_android.logger_system.LogLevel;
 import com.bitdubai.fermat_api.layer.osa_android.logger_system.LogManager;
-import com.bitdubai.fermat_bch_api.layer.crypto_network.bitcoin.interfaces.BitcoinNetworkManager;
+
+import com.bitdubai.fermat_bch_api.layer.crypto_network.manager.BlockchainManager;
 import com.bitdubai.fermat_bch_api.layer.crypto_router.incoming_crypto.IncomingCryptoManager;
 
 import org.fermat.fermat_dap_api.layer.all_definition.digital_asset.DigitalAsset;
@@ -32,7 +31,7 @@ import org.fermat.fermat_dap_api.layer.all_definition.enums.EventStatus;
 import org.fermat.fermat_dap_api.layer.all_definition.network_service_message.DAPMessage;
 import org.fermat.fermat_dap_api.layer.all_definition.network_service_message.content_message.AssetMetadataContentMessage;
 import org.fermat.fermat_dap_api.layer.all_definition.network_service_message.content_message.DistributionStatusUpdateContentMessage;
-import org.fermat.fermat_dap_api.layer.all_definition.network_service_message.exceptions.CantSendMessageException;
+import org.fermat.fermat_dap_api.layer.all_definition.network_service_message.exceptions.CantSendDAPMessageException;
 import org.fermat.fermat_dap_api.layer.all_definition.network_service_message.exceptions.CantUpdateMessageStatusException;
 import org.fermat.fermat_dap_api.layer.all_definition.util.ActorUtils;
 import org.fermat.fermat_dap_api.layer.dap_actor.DAPActor;
@@ -89,7 +88,7 @@ public class RedeemPointRedemptionMonitorAgent implements Agent {
     private final ActorAssetRedeemPointManager actorAssetRedeemPointManager;
     private final AssetRedeemPointWalletManager assetRedeemPointWalletManager;
     private final ActorAssetUserManager actorAssetUserManager;
-    private final BitcoinNetworkManager bitcoinNetworkManager;
+    private final BlockchainManager bitcoinNetworkManager;
     private final ActorAssetIssuerManager actorAssetIssuerManager;
     private final IncomingCryptoManager incomingCryptoManager;
     private final TransactionProtocolManager<CryptoTransaction> protocolManager;
@@ -104,7 +103,7 @@ public class RedeemPointRedemptionMonitorAgent implements Agent {
                                              ActorAssetRedeemPointManager actorAssetRedeemPointManager,
                                              AssetRedeemPointWalletManager assetRedeemPointWalletManager,
                                              ActorAssetUserManager actorAssetUserManager,
-                                             BitcoinNetworkManager bitcoinNetworkManager,
+                                             BlockchainManager bitcoinNetworkManager,
                                              ActorAssetIssuerManager actorAssetIssuerManager,
                                              IncomingCryptoManager incomingCryptoManager) throws CantSetObjectException {
 
@@ -171,7 +170,7 @@ public class RedeemPointRedemptionMonitorAgent implements Agent {
         private static final int WAIT_TIME = 20; //SECONDS
         private org.fermat.fermat_dap_plugin.digital_asset_transaction.redeem_point_redemption.developer.version_1.structure.database.AssetRedeemPointRedemptionDAO dao;
 
-        public RedemptionAgent(UUID pluginId, PluginFileSystem pluginFileSystem, ActorAssetUserManager actorAssetUserManager, ActorAssetIssuerManager actorAssetIssuerManager, BitcoinNetworkManager bitcoinNetworkManager) throws CantSetObjectException, CantOpenDatabaseException, DatabaseNotFoundException {
+        public RedemptionAgent(UUID pluginId, PluginFileSystem pluginFileSystem, ActorAssetUserManager actorAssetUserManager, ActorAssetIssuerManager actorAssetIssuerManager, BlockchainManager bitcoinNetworkManager) throws CantSetObjectException, CantOpenDatabaseException, DatabaseNotFoundException {
             super.setPluginId(pluginId);
             super.setPluginFileSystem(pluginFileSystem);
             super.setActorAssetUserManager(actorAssetUserManager);
@@ -386,7 +385,7 @@ public class RedeemPointRedemptionMonitorAgent implements Agent {
             System.out.println("REDEEM POINT REDEMPTION - " + message);
         }
 
-        private void updateStatusAndSendMessage(DistributionStatus status, DAPMessage message) throws CantSendTransactionNewStatusNotificationException, RecordsNotFoundException, org.fermat.fermat_dap_plugin.digital_asset_transaction.redeem_point_redemption.developer.version_1.structure.exceptions.CantLoadAssetRedemptionMetadataListException, CantConfirmTransactionException, CantSetObjectException, CantSendMessageException, CantUpdateMessageStatusException {
+        private void updateStatusAndSendMessage(DistributionStatus status, DAPMessage message) throws CantSendTransactionNewStatusNotificationException, RecordsNotFoundException, org.fermat.fermat_dap_plugin.digital_asset_transaction.redeem_point_redemption.developer.version_1.structure.exceptions.CantLoadAssetRedemptionMetadataListException, CantConfirmTransactionException, CantSetObjectException, CantSendDAPMessageException, CantUpdateMessageStatusException {
             AssetMetadataContentMessage content = (AssetMetadataContentMessage) message.getMessageContent();
             DigitalAssetMetadata metadata = content.getAssetMetadata();
             String transactionId = metadata.getGenesisTransaction();

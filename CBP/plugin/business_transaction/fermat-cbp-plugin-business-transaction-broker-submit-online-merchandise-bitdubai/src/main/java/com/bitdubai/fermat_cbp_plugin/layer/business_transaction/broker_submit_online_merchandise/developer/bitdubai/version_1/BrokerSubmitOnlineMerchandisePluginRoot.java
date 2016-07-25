@@ -6,6 +6,7 @@ import com.bitdubai.fermat_api.FermatException;
 import com.bitdubai.fermat_api.layer.all_definition.common.system.abstract_classes.AbstractPlugin;
 import com.bitdubai.fermat_api.layer.all_definition.common.system.annotations.NeededAddonReference;
 import com.bitdubai.fermat_api.layer.all_definition.common.system.annotations.NeededPluginReference;
+import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.EventManager;
 import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.FermatManager;
 import com.bitdubai.fermat_api.layer.all_definition.common.system.utils.PluginVersionReference;
 import com.bitdubai.fermat_api.layer.all_definition.developer.DatabaseManagerForDevelopers;
@@ -33,6 +34,7 @@ import com.bitdubai.fermat_cbp_api.all_definition.exceptions.CantSetObjectExcept
 import com.bitdubai.fermat_cbp_api.all_definition.exceptions.CantStartServiceException;
 import com.bitdubai.fermat_cbp_api.layer.contract.customer_broker_purchase.interfaces.CustomerBrokerContractPurchaseManager;
 import com.bitdubai.fermat_cbp_api.layer.contract.customer_broker_sale.interfaces.CustomerBrokerContractSaleManager;
+import com.bitdubai.fermat_cbp_api.layer.negotiation.customer_broker_purchase.interfaces.CustomerBrokerPurchaseNegotiationManager;
 import com.bitdubai.fermat_cbp_api.layer.negotiation.customer_broker_sale.interfaces.CustomerBrokerSaleNegotiationManager;
 import com.bitdubai.fermat_cbp_api.layer.network_service.transaction_transmission.interfaces.TransactionTransmissionManager;
 import com.bitdubai.fermat_cbp_api.layer.stock_transactions.crypto_money_destock.interfaces.CryptoMoneyDestockManager;
@@ -43,17 +45,16 @@ import com.bitdubai.fermat_cbp_plugin.layer.business_transaction.broker_submit_o
 import com.bitdubai.fermat_cbp_plugin.layer.business_transaction.broker_submit_online_merchandise.developer.bitdubai.version_1.database.BrokerSubmitOnlineMerchandiseBusinessTransactionDeveloperDatabaseFactory;
 import com.bitdubai.fermat_cbp_plugin.layer.business_transaction.broker_submit_online_merchandise.developer.bitdubai.version_1.event_handler.BrokerSubmitOnlineMerchandiseRecorderService;
 import com.bitdubai.fermat_cbp_plugin.layer.business_transaction.broker_submit_online_merchandise.developer.bitdubai.version_1.exceptions.CantInitializeBrokerSubmitOnlineMerchandiseBusinessTransactionDatabaseException;
-import com.bitdubai.fermat_cbp_plugin.layer.business_transaction.broker_submit_online_merchandise.developer.bitdubai.version_1.structure.BrokerSubmitOnlineMerchandiseMonitorAgent;
+import com.bitdubai.fermat_cbp_plugin.layer.business_transaction.broker_submit_online_merchandise.developer.bitdubai.version_1.structure.BrokerSubmitOnlineMerchandiseMonitorAgent2;
 import com.bitdubai.fermat_cbp_plugin.layer.business_transaction.broker_submit_online_merchandise.developer.bitdubai.version_1.structure.BrokerSubmitOnlineMerchandiseTransactionManager;
 import com.bitdubai.fermat_ccp_api.layer.crypto_transaction.outgoing_intra_actor.interfaces.OutgoingIntraActorManager;
 import com.bitdubai.fermat_ccp_api.layer.identity.intra_user.interfaces.IntraWalletUserIdentityManager;
-import com.bitdubai.fermat_pip_api.layer.platform_service.event_manager.interfaces.EventManager;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import static com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.error_manager.enums.UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN;
@@ -96,6 +97,9 @@ public class BrokerSubmitOnlineMerchandisePluginRoot extends AbstractPlugin impl
     @NeededPluginReference(platform = Platforms.CRYPTO_BROKER_PLATFORM, layer = Layers.NEGOTIATION, plugin = Plugins.NEGOTIATION_SALE)
     private CustomerBrokerSaleNegotiationManager customerBrokerSaleNegotiationManager;
 
+    @NeededPluginReference(platform = Platforms.CRYPTO_BROKER_PLATFORM, layer = Layers.NEGOTIATION, plugin = Plugins.NEGOTIATION_PURCHASE)
+    private CustomerBrokerPurchaseNegotiationManager customerBrokerPurchaseNegotiationManager;
+
     @NeededPluginReference(platform = Platforms.CRYPTO_BROKER_PLATFORM, layer = Layers.WALLET, plugin = Plugins.CRYPTO_BROKER_WALLET)
     private CryptoBrokerWalletManager cryptoBrokerWalletManager;
 
@@ -117,6 +121,16 @@ public class BrokerSubmitOnlineMerchandisePluginRoot extends AbstractPlugin impl
      */
     Database database;
 
+    /**
+     * Represents the plugin processor agent
+     */
+    BrokerSubmitOnlineMerchandiseMonitorAgent2 processorAgent;
+
+    //Agent configuration
+    private final long SLEEP_TIME = 10000;
+    private final long DELAY_TIME = 1000;
+    private final TimeUnit TIME_UNIT = TimeUnit.MILLISECONDS;
+
     static Map<String, LogLevel> newLoggingLevel = new HashMap<String, LogLevel>();
 
     public BrokerSubmitOnlineMerchandisePluginRoot() {
@@ -126,7 +140,8 @@ public class BrokerSubmitOnlineMerchandisePluginRoot extends AbstractPlugin impl
     @Override
     public List<String> getClassesFullPath() {
         List<String> returnedClasses = new ArrayList<String>();
-        returnedClasses.add("com.bitdubai.fermat_cbp_plugin.layer.business_transaction.broker_submit_online_merchandise.developer.bitdubai.version_1.BrokerSubmitOnlineMerchandisePluginRoot");
+        returnedClasses.add("BrokerSubmitOnlineMerchandisePluginRoot");
+
         return returnedClasses;
     }
 
@@ -250,7 +265,7 @@ public class BrokerSubmitOnlineMerchandisePluginRoot extends AbstractPlugin impl
             /**
              * Init monitor Agent
              */
-            BrokerSubmitOnlineMerchandiseMonitorAgent brokerSubmitOnlineMerchandiseMonitorAgent = new BrokerSubmitOnlineMerchandiseMonitorAgent(
+            /*BrokerSubmitOnlineMerchandiseMonitorAgent brokerSubmitOnlineMerchandiseMonitorAgent = new BrokerSubmitOnlineMerchandiseMonitorAgent(
                     pluginDatabaseSystem,
                     logManager,
                     this,
@@ -261,9 +276,28 @@ public class BrokerSubmitOnlineMerchandisePluginRoot extends AbstractPlugin impl
                     customerBrokerContractSaleManager,
                     outgoingIntraActorManager,
                     cryptoMoneyDeStockManager,
-                    intraWalletUserIdentityManager);
+                    intraWalletUserIdentityManager,
+                    customerBrokerPurchaseNegotiationManager);
 
-            brokerSubmitOnlineMerchandiseMonitorAgent.start();
+            brokerSubmitOnlineMerchandiseMonitorAgent.start();*/
+
+            //New Agent starting
+            processorAgent = new BrokerSubmitOnlineMerchandiseMonitorAgent2(
+                    SLEEP_TIME,
+                    TIME_UNIT,
+                    DELAY_TIME,
+                    this,
+                    eventManager,
+                    brokerSubmitOnlineMerchandiseBusinessTransactionDao,
+                    transactionTransmissionManager,
+                    customerBrokerContractPurchaseManager,
+                    customerBrokerContractSaleManager,
+                    customerBrokerPurchaseNegotiationManager,
+                    outgoingIntraActorManager,
+                    cryptoMoneyDeStockManager,
+                    intraWalletUserIdentityManager
+            );
+            processorAgent.start();
 
             this.serviceStatus = ServiceStatus.STARTED;
             //System.out.println("Broker submit online merchandise starting");
@@ -341,6 +375,7 @@ public class BrokerSubmitOnlineMerchandisePluginRoot extends AbstractPlugin impl
     @Override
     public void stop() {
         try {
+            processorAgent.stop();
             this.serviceStatus = ServiceStatus.STOPPED;
         } catch (Exception exception) {
             reportError(DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, FermatException.wrapException(exception));
@@ -384,17 +419,26 @@ public class BrokerSubmitOnlineMerchandisePluginRoot extends AbstractPlugin impl
         return brokerSubmitOnlineMerchandiseBusinessTransactionDeveloperDatabaseFactory.getDatabaseTableContent(developerObjectFactory, developerDatabaseTable);
     }
 
-    private void testSubmit() {
+    /*private void testSubmit() {
         try {
             BigDecimal referencePrice = BigDecimal.valueOf(666);
             this.brokerSubmitOnlineMerchandiseTransactionManager.submitMerchandise(
                     referencePrice,
-                    "TestCBPWalletPublicKey",
-                    "TestCustomerWalletPublicKey",
+                    "TestCBPWalletPublicKey1",
+                    "TestCustomerWalletPublicKey1",
+                    CryptoCurrency.BITCOIN,
                     "888052D7D718420BD197B647F3BB04128C9B71BC99DBB7BC60E78BDAC4DFC6E2");
+
+            this.brokerSubmitOnlineMerchandiseTransactionManager.submitMerchandise(
+                    referencePrice,
+                    "TestCBPWalletPublicKey2",
+                    "TestCustomerWalletPublicKey2",
+                    CryptoCurrency.FERMAT,
+                    "999952D7D718420BD197B647F3BB04128C9B71BC99DBB7BC60E78BDAC4DF9999");
+
         } catch (Exception e) {
             System.out.println("Exception in Broker Submit Online Merchandise " + e);
             e.printStackTrace();
         }
-    }
+    }*/
 }

@@ -32,7 +32,7 @@ import java.util.UUID;
  * @since Java JDK 1.7
  */
 
-public class BitcoinCurrencyCryptoVaultDeveloperDatabaseFactory implements DealsWithPluginDatabaseSystem, DealsWithPluginIdentity {
+public class BitcoinCurrencyCryptoVaultDeveloperDatabaseFactory {//implements DealsWithPluginDatabaseSystem, DealsWithPluginIdentity {
 
     /**
      * DealsWithPluginDatabaseSystem Interface member variables.
@@ -202,6 +202,24 @@ public class BitcoinCurrencyCryptoVaultDeveloperDatabaseFactory implements Deals
 
 
 
+        /**
+         * Table Imported_Seeds columns.
+         */
+        List<String> imported_seedColumns = new ArrayList<String>();
+
+        imported_seedColumns.add(BitcoinCurrencyCryptoVaultDatabaseConstants.IMPORTED_SEED_DATE_COLUMN_NAME);
+        imported_seedColumns.add(BitcoinCurrencyCryptoVaultDatabaseConstants.IMPORTED_SEED_NETWORK_TYPE_COLUMN_NAME);
+        imported_seedColumns.add(BitcoinCurrencyCryptoVaultDatabaseConstants.IMPORTED_SEED_WALLET_ADDRESS_COLUMN_NAME);
+        imported_seedColumns.add(BitcoinCurrencyCryptoVaultDatabaseConstants.IMPORTED_SEED_BALANCE_COLUMN_NAME);
+        imported_seedColumns.add(BitcoinCurrencyCryptoVaultDatabaseConstants.IMPORTED_SEED_STATUS_COLUMN_NAME);
+        /**
+         * Table Imported_Seeds addition.
+         */
+        DeveloperDatabaseTable imported_SeedTable = developerObjectFactory.getNewDeveloperDatabaseTable(BitcoinCurrencyCryptoVaultDatabaseConstants.IMPORTED_SEED_TABLE_NAME, imported_seedColumns);
+        tables.add(imported_SeedTable);
+
+
+
         return tables;
     }
 
@@ -252,13 +270,13 @@ public class BitcoinCurrencyCryptoVaultDeveloperDatabaseFactory implements Deals
         return returnedRecords;
     }
 
-    @Override
-    public void setPluginDatabaseSystem(PluginDatabaseSystem pluginDatabaseSystem) {
-        this.pluginDatabaseSystem = pluginDatabaseSystem;
-    }
-
-    @Override
-    public void setPluginId(UUID pluginId) {
-        this.pluginId = pluginId;
-    }
+//    @Override
+//    public void setPluginDatabaseSystem(PluginDatabaseSystem pluginDatabaseSystem) {
+//        this.pluginDatabaseSystem = pluginDatabaseSystem;
+//    }
+//
+//    @Override
+//    public void setPluginId(UUID pluginId) {
+//        this.pluginId = pluginId;
+//    }
 }

@@ -2,7 +2,9 @@ package com.bitdubai.fermat_ccp_plugin.layer.crypto_transaction.hold.developer.b
 
 import com.bitdubai.fermat_api.layer.all_definition.enums.Actors;
 import com.bitdubai.fermat_api.layer.all_definition.enums.BlockchainNetworkType;
+import com.bitdubai.fermat_api.layer.all_definition.enums.CryptoCurrency;
 import com.bitdubai.fermat_api.layer.all_definition.money.CryptoAddress;
+import com.bitdubai.fermat_bch_api.layer.definition.crypto_fee.FeeOrigin;
 import com.bitdubai.fermat_ccp_api.layer.basic_wallet.crypto_wallet.interfaces.CryptoWalletTransactionRecord;
 
 import java.util.UUID;
@@ -24,6 +26,10 @@ public class CryptoWalletTransactionRecordImpl implements CryptoWalletTransactio
     private final long          timestamp         ;
     private final String        memo              ;
     private final BlockchainNetworkType blockchainNetworkType;
+    private final CryptoCurrency cryptoCurrency;
+    private final FeeOrigin feeOrigin;
+    private final long fee;
+    private final long Total;
 
     public CryptoWalletTransactionRecordImpl(final UUID transactionId,
                                              final UUID requestId,
@@ -37,7 +43,9 @@ public class CryptoWalletTransactionRecordImpl implements CryptoWalletTransactio
                                              final long amount,
                                              final long timestamp,
                                              final String memo,
-                                             final BlockchainNetworkType blockchainNetworkType) {
+                                             final BlockchainNetworkType blockchainNetworkType, CryptoCurrency cryptoCurrency,
+                                             FeeOrigin feeOrigin,
+                                             long fee, long total) {
 
         this.transactionId      = transactionId     ;
         this.requestId          = requestId         ;
@@ -52,6 +60,10 @@ public class CryptoWalletTransactionRecordImpl implements CryptoWalletTransactio
         this.timestamp          = timestamp         ;
         this.memo               = memo              ;
         this.blockchainNetworkType = blockchainNetworkType;
+        this.cryptoCurrency = cryptoCurrency;
+        this.feeOrigin          = feeOrigin;
+        this.fee                = fee;
+        Total = total;
     }
 
     @Override
@@ -105,6 +117,11 @@ public class CryptoWalletTransactionRecordImpl implements CryptoWalletTransactio
     }
 
     @Override
+    public long getTotal() {
+        return this.Total;
+    }
+
+    @Override
     public long getTimestamp() {
         return timestamp;
     }
@@ -116,5 +133,22 @@ public class CryptoWalletTransactionRecordImpl implements CryptoWalletTransactio
 
     @Override
     public BlockchainNetworkType getBlockchainNetworkType() {return blockchainNetworkType;}
+
+    @Override
+    public CryptoCurrency getCryptoCurrency() {
+        return this.cryptoCurrency;
+    }
+
+    @Override
+    public FeeOrigin getFeeOrigin()
+    {
+        return feeOrigin;
+    }
+
+    @Override
+    public long getFee()
+    {
+        return fee;
+    }
 
 }

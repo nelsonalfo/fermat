@@ -17,10 +17,12 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bitdubai.fermat_android_api.layer.definition.wallet.AbstractFermatFragment;
+import com.bitdubai.fermat_android_api.layer.definition.wallet.interfaces.ReferenceAppFermatSession;
 import com.bitdubai.fermat_android_api.ui.interfaces.FermatListItemListeners;
 import com.bitdubai.fermat_android_api.ui.interfaces.FermatWorkerCallBack;
 import com.bitdubai.fermat_android_api.ui.util.FermatWorker;
 import com.bitdubai.fermat_api.layer.all_definition.navigation_structure.enums.Activities;
+import com.bitdubai.fermat_api.layer.pip_engine.interfaces.ResourceProviderManager;
 import com.bitdubai.fermat_ccp_api.layer.module.intra_user.exceptions.CantGetActiveLoginIdentityException;
 import com.bitdubai.fermat_ccp_api.layer.module.intra_user.exceptions.CantGetIntraUsersListException;
 import com.bitdubai.fermat_ccp_api.layer.module.intra_user.interfaces.IntraUserInformation;
@@ -28,7 +30,7 @@ import com.bitdubai.fermat_ccp_api.layer.module.intra_user.interfaces.IntraUserM
 import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.ErrorManager;
 import com.bitdubai.sub_app.intra_user_community.R;
 import com.bitdubai.sub_app.intra_user_community.adapters.AppFriendsListAdapter;
-import com.bitdubai.sub_app.intra_user_community.session.IntraUserSubAppSession;
+
 import com.bitdubai.sub_app.intra_user_community.util.CommonLogger;
 
 import java.util.ArrayList;
@@ -38,7 +40,7 @@ import java.util.List;
  * Creado por Jose manuel De Sousa el 30/11/2015
  */
 @SuppressWarnings({"FieldCanBeLocal", "unused"})
-public class ConnectionsListFragment extends AbstractFermatFragment implements SwipeRefreshLayout.OnRefreshListener, FermatListItemListeners<IntraUserInformation> {
+public class ConnectionsListFragment extends AbstractFermatFragment<ReferenceAppFermatSession<IntraUserModuleManager>,ResourceProviderManager>  implements SwipeRefreshLayout.OnRefreshListener, FermatListItemListeners<IntraUserInformation> {
 
     public static final String INTRA_USER_SELECTED = "intra_user";
     private static final int MAX = 20;
@@ -51,11 +53,12 @@ public class ConnectionsListFragment extends AbstractFermatFragment implements S
     private boolean isRefreshing = false;
     private View rootView;
     private AppFriendsListAdapter adapter;
-    private IntraUserSubAppSession intraUserSubAppSession;
+    private ReferenceAppFermatSession<IntraUserModuleManager> intraUserSubAppSession;
     private LinearLayout emptyView;
     private IntraUserModuleManager moduleManager;
     private ErrorManager errorManager;
     private List<IntraUserInformation> lstIntraUserInformations;
+    private FermatWorker worker;
 
     public static ConnectionsListFragment newInstance() {
         return new ConnectionsListFragment();
@@ -65,7 +68,7 @@ public class ConnectionsListFragment extends AbstractFermatFragment implements S
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        intraUserSubAppSession = ((IntraUserSubAppSession) appSession);
+        intraUserSubAppSession =  appSession;
         moduleManager = intraUserSubAppSession.getModuleManager();
         errorManager = appSession.getErrorManager();
         lstIntraUserInformations = new ArrayList<>();
@@ -112,7 +115,7 @@ public class ConnectionsListFragment extends AbstractFermatFragment implements S
             connectionsProgressDialog.setMessage("Loading Connections");
             connectionsProgressDialog.setCancelable(false);
             connectionsProgressDialog.show();
-            FermatWorker worker = new FermatWorker() {
+            worker = new FermatWorker() {
                 @Override
                 protected Object doInBackground() throws Exception {
                     return getMoreData();
@@ -138,8 +141,8 @@ public class ConnectionsListFragment extends AbstractFermatFragment implements S
                                 showEmpty(false, emptyView);
                             }
                         }
-                    } else
-                        showEmpty(adapter.getSize() < 0, emptyView);
+                    }
+                       // showEmpty(adapter.getSize() < 0, emptyView);
                 }
 
                 @Override
@@ -199,5 +202,12 @@ public class ConnectionsListFragment extends AbstractFermatFragment implements S
     @Override
     public void onLongItemClickListener(IntraUserInformation data, int position) {
 
+    }
+
+    @Override
+    public void onStop() {
+        if(worker != null)
+            worker.shutdownNow();
+        super.onStop();
     }
 }

@@ -4,35 +4,36 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.Window;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.bitdubai.fermat_android_api.layer.definition.wallet.interfaces.ReferenceAppFermatSession;
 import com.bitdubai.fermat_android_api.layer.definition.wallet.views.FermatTextView;
 import com.bitdubai.fermat_api.FermatException;
+import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.ErrorManager;
+import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.error_manager.enums.UnexpectedUIExceptionSeverity;
+import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.error_manager.enums.UnexpectedWalletExceptionSeverity;
 import com.bitdubai.fermat_api.layer.all_definition.enums.FiatCurrency;
 import com.bitdubai.fermat_api.layer.all_definition.enums.UISource;
 import com.bitdubai.fermat_api.layer.all_definition.enums.WalletsPublicKeys;
 import com.bitdubai.fermat_api.layer.all_definition.navigation_structure.enums.Wallets;
-import com.bitdubai.fermat_bnk_api.all_definition.bank_money_transaction.BankTransactionParameters;
 import com.bitdubai.fermat_bnk_api.all_definition.enums.TransactionType;
-import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.error_manager.enums.UnexpectedUIExceptionSeverity;
-import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.error_manager.enums.UnexpectedWalletExceptionSeverity;
-import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.ErrorManager;
 import com.bitdubai.fermat_bnk_api.layer.bnk_wallet_module.interfaces.BankMoneyWalletModuleManager;
-import com.bitdubai.fermat_bnk_plugin.layer.wallet_module.bank_money.developer.bitdubai.version_1.structure.BankTransactionParametersImpl;
 import com.bitdubai.fermat_wpd_api.layer.wpd_network_service.wallet_resources.interfaces.WalletResourcesProviderManager;
 import com.bitdubai.reference_wallet.bank_money_wallet.R;
-import com.bitdubai.reference_wallet.bank_money_wallet.session.BankMoneyWalletSession;
+import com.bitdubai.reference_wallet.bank_money_wallet.common.BankTransactionParametersImpl;
 import com.bitdubai.reference_wallet.bank_money_wallet.util.NumberInputFilter;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+
 
 
 /**
@@ -44,15 +45,13 @@ public class CreateTransactionFragmentDialog extends Dialog implements
 
     public Activity activity;
     public Dialog d;
-
-    //private CreateContactDialogCallback createContactDialogCallback;
-
+    private static int MAX_LENGHT_MEMO = 100;
 
     /**
      * Resources
      */
     private WalletResourcesProviderManager walletResourcesProviderManager;
-    private BankMoneyWalletSession bankMoneyWalletSession;
+    private ReferenceAppFermatSession<BankMoneyWalletModuleManager> bankMoneyWalletSession;
     private Resources resources;
     private TransactionType transactionType;
     BigDecimal optionalAmount;
@@ -71,6 +70,7 @@ public class CreateTransactionFragmentDialog extends Dialog implements
     LinearLayout dialogTitleLayout;
     EditText amountText;
     AutoCompleteTextView memoText;
+    FermatTextView memoTextCount;
     FermatTextView applyBtn;
     FermatTextView cancelBtn;
     String account;
@@ -90,8 +90,18 @@ public class CreateTransactionFragmentDialog extends Dialog implements
      * @param
      */
 
+    private final TextWatcher memoTextWatcher = new TextWatcher() {
 
-    public CreateTransactionFragmentDialog(ErrorManager errorManager,Activity a, BankMoneyWalletSession bankMoneyWalletSession, Resources resources,
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            memoTextCount.setText(String.valueOf(MAX_LENGHT_MEMO - s.length()));
+        }
+        public void afterTextChanged(Editable s) {}
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+    };
+
+
+    public CreateTransactionFragmentDialog(ErrorManager errorManager,Activity a, ReferenceAppFermatSession<BankMoneyWalletModuleManager> bankMoneyWalletSession, Resources resources,
                                            TransactionType transactionType,String account,FiatCurrency fiatCurrency, BigDecimal optionalAmount, String optionalMemo) {
         super(a);
         // TODO Auto-generated constructor stub
@@ -126,6 +136,8 @@ public class CreateTransactionFragmentDialog extends Dialog implements
             dialogTitle = (FermatTextView) findViewById(R.id.bnk_ctd_title);
             amountText = (EditText) findViewById(R.id.bnk_ctd_amount);
             memoText = (AutoCompleteTextView) findViewById(R.id.bnk_ctd_memo);
+            memoTextCount = (FermatTextView) findViewById(R.id.bnk_ctd_memo_count);
+
             applyBtn = (FermatTextView) findViewById(R.id.bnk_ctd_apply_transaction_btn);
             cancelBtn = (FermatTextView) findViewById(R.id.bnk_ctd_cancel_transaction_btn);
 
@@ -135,6 +147,10 @@ public class CreateTransactionFragmentDialog extends Dialog implements
             cancelBtn.setTextColor(getTransactionTitleColor());
 
             amountText.setFilters(new InputFilter[]{new NumberInputFilter(11, 2)});
+            memoText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(MAX_LENGHT_MEMO)});
+            memoText.addTextChangedListener(memoTextWatcher);
+            memoTextCount.setText(String.valueOf(MAX_LENGHT_MEMO));
+
 
             cancelBtn.setOnClickListener(this);
             applyBtn.setOnClickListener(this);
@@ -209,17 +225,7 @@ public class CreateTransactionFragmentDialog extends Dialog implements
 
                 if(availableBalance.compareTo(new BigDecimal(amount)) >= 0) {
                     System.out.println("DIALOG = " + TransactionType.DEBIT.getCode());
-                    final BankTransactionParameters transactionParameters = new BankTransactionParametersImpl(
-                            UUID.randomUUID(),
-                            null,
-                            WalletsPublicKeys.BNK_BANKING_WALLET.getCode(),
-                            "pkeyActorRefWallet",
-                            new BigDecimal(amountText.getText().toString()),
-                            account,
-                            fiatCurrency,
-                            memoText.getText().toString(),
-                            TransactionType.DEBIT);
-
+                    BankTransactionParametersImpl transactionParameters = new BankTransactionParametersImpl(UUID.randomUUID(), null, WalletsPublicKeys.BNK_BANKING_WALLET.getCode(), "pkeyActorRefWallet", new BigDecimal(amountText.getText().toString()), account, fiatCurrency, memoText.getText().toString(), TransactionType.DEBIT);
                     moduleManager.makeAsyncWithdraw(transactionParameters);
                     
                 } else {
@@ -229,17 +235,7 @@ public class CreateTransactionFragmentDialog extends Dialog implements
             }
             if (transactionType == TransactionType.CREDIT) {
                 System.out.println("DIALOG = " + TransactionType.CREDIT.getCode());
-                final BankTransactionParameters transactionParameters = new BankTransactionParametersImpl(
-                        UUID.randomUUID(),
-                        null,
-                        WalletsPublicKeys.BNK_BANKING_WALLET.getCode(),
-                        "pkeyActorRefWallet",
-                        new BigDecimal(amountText.getText().toString()),
-                        account,
-                        fiatCurrency,
-                        memoText.getText().toString(),
-                        TransactionType.CREDIT);
-
+                BankTransactionParametersImpl transactionParameters = new BankTransactionParametersImpl(UUID.randomUUID(), null, WalletsPublicKeys.BNK_BANKING_WALLET.getCode(), "pkeyActorRefWallet", new BigDecimal(amountText.getText().toString()), account, fiatCurrency, memoText.getText().toString(), TransactionType.CREDIT);
                 moduleManager.makeAsyncDeposit(transactionParameters);
             }
         } catch (Exception e) {

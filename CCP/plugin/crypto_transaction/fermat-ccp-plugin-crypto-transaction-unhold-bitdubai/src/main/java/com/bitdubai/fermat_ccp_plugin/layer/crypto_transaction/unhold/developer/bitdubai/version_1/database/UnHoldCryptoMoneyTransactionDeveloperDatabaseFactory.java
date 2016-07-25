@@ -32,7 +32,7 @@ import java.util.UUID;
  * @since Java JDK 1.7
  */
 
-public class UnHoldCryptoMoneyTransactionDeveloperDatabaseFactory implements DealsWithPluginDatabaseSystem, DealsWithPluginIdentity {
+public class UnHoldCryptoMoneyTransactionDeveloperDatabaseFactory {//implements DealsWithPluginDatabaseSystem, DealsWithPluginIdentity {
 
     /**
      * DealsWithPluginDatabaseSystem Interface member variables.
@@ -130,6 +130,8 @@ public class UnHoldCryptoMoneyTransactionDeveloperDatabaseFactory implements Dea
         holdColumns.add(UnHoldCryptoMoneyTransactionDatabaseConstants.UNHOLD_TIMESTAMP_CONFIRM_REJECT_COLUMN_NAME);
         holdColumns.add(UnHoldCryptoMoneyTransactionDatabaseConstants.UNHOLD_STATUS_COLUMN_NAME);
         holdColumns.add(UnHoldCryptoMoneyTransactionDatabaseConstants.UNHOLD_BLOCK_CHAIN_NETWORK_TYPE_COLUMN_NAME);
+        holdColumns.add(UnHoldCryptoMoneyTransactionDatabaseConstants.UNHOLD_FEE_COLUMN_NAME);
+        holdColumns.add(UnHoldCryptoMoneyTransactionDatabaseConstants.UNHOLD_FEE_ORIGIN_COLUMN_NAME);
         /**
          * Table Hold addition.
          */
@@ -187,13 +189,13 @@ public class UnHoldCryptoMoneyTransactionDeveloperDatabaseFactory implements Dea
         return returnedRecords;
     }
 
-    @Override
-    public void setPluginDatabaseSystem(PluginDatabaseSystem pluginDatabaseSystem) {
-        this.pluginDatabaseSystem = pluginDatabaseSystem;
-    }
-
-    @Override
-    public void setPluginId(UUID pluginId) {
-        this.pluginId = pluginId;
-    }
+//    @Override
+//    public void setPluginDatabaseSystem(PluginDatabaseSystem pluginDatabaseSystem) {
+//        this.pluginDatabaseSystem = pluginDatabaseSystem;
+//    }
+//
+//    @Override
+//    public void setPluginId(UUID pluginId) {
+//        this.pluginId = pluginId;
+//    }
 }

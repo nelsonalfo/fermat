@@ -4,7 +4,6 @@ import com.bitdubai.fermat_api.layer.modules.ModuleManagerImpl;
 import com.bitdubai.fermat_api.layer.modules.common_classes.ActiveActorIdentityInformation;
 import com.bitdubai.fermat_api.layer.modules.exceptions.ActorIdentityNotSelectedException;
 import com.bitdubai.fermat_api.layer.modules.exceptions.CantGetSelectedActorIdentityException;
-import com.bitdubai.fermat_api.layer.modules.interfaces.ModuleManager;
 import com.bitdubai.fermat_api.layer.osa_android.file_system.PluginFileSystem;
 
 import org.fermat.fermat_dap_api.layer.dap_identity.redeem_point.exceptions.CantCreateNewRedeemPointException;
@@ -15,16 +14,15 @@ import org.fermat.fermat_dap_api.layer.dap_identity.redeem_point.interfaces.Rede
 import org.fermat.fermat_dap_api.layer.dap_identity.redeem_point.interfaces.RedeemPointIdentityManager;
 import org.fermat.fermat_dap_api.layer.dap_sub_app_module.redeem_point_identity.RedeemPointIdentitySettings;
 import org.fermat.fermat_dap_api.layer.dap_sub_app_module.redeem_point_identity.interfaces.RedeemPointIdentityModuleManager;
+import com.bitdubai.fermat_api.layer.all_definition.enums.GeoFrequency;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
 /**
- *
  * Created by nerio on 14/5/2016.
  */
-public class RedeemPointIdentitySubAppModuleManager extends ModuleManagerImpl<RedeemPointIdentitySettings> implements RedeemPointIdentityModuleManager, Serializable {
+public class RedeemPointIdentitySubAppModuleManager extends ModuleManagerImpl<RedeemPointIdentitySettings> implements RedeemPointIdentityModuleManager {
 
     private final PluginFileSystem pluginFileSystem;
     private final UUID pluginId;
@@ -34,8 +32,8 @@ public class RedeemPointIdentitySubAppModuleManager extends ModuleManagerImpl<Re
         super(pluginFileSystem, pluginId);
 
         this.redeemPointIdentityManager = redeemPointIdentityManager;
-        this.pluginFileSystem    = pluginFileSystem;
-        this.pluginId            = pluginId;
+        this.pluginFileSystem = pluginFileSystem;
+        this.pluginId = pluginId;
     }
 
     @Override
@@ -50,7 +48,9 @@ public class RedeemPointIdentitySubAppModuleManager extends ModuleManagerImpl<Re
 
     @Override
     public RedeemPointIdentity createNewRedeemPoint(String alias, byte[] profileImage) throws CantCreateNewRedeemPointException {
-        return redeemPointIdentityManager.createNewRedeemPoint(alias, profileImage);
+        return redeemPointIdentityManager.createNewRedeemPoint(alias, profileImage,
+                redeemPointIdentityManager.getAccuracyDataDefault(),
+                redeemPointIdentityManager.getFrequencyDataDefault());
     }
 
     @Override
@@ -62,9 +62,10 @@ public class RedeemPointIdentitySubAppModuleManager extends ModuleManagerImpl<Re
                                                     String cityName,
                                                     String postalCode,
                                                     String streetName,
-                                                    String houseNumber) throws CantCreateNewRedeemPointException {
+                                                    String houseNumber, int accuracy, GeoFrequency frequency) throws CantCreateNewRedeemPointException {
 
-        return redeemPointIdentityManager.createNewRedeemPoint(alias, profileImage, contactInformation, countryName, provinceName, cityName, postalCode, streetName, houseNumber);
+        return redeemPointIdentityManager.createNewRedeemPoint(alias, profileImage, contactInformation, countryName, provinceName, cityName, postalCode, streetName, houseNumber,
+                                accuracy,frequency);
     }
 
     @Override
@@ -77,9 +78,10 @@ public class RedeemPointIdentitySubAppModuleManager extends ModuleManagerImpl<Re
                                           String cityName,
                                           String postalCode,
                                           String streetName,
-                                          String houseNumber) throws CantUpdateIdentityRedeemPointException {
+                                          String houseNumber, int accuracy, GeoFrequency frequency) throws CantUpdateIdentityRedeemPointException {
 
-        redeemPointIdentityManager.updateIdentityRedeemPoint(identityPublicKey, identityAlias, profileImage, contactInformation, countryName, provinceName, cityName, postalCode, streetName, houseNumber);
+        redeemPointIdentityManager.updateIdentityRedeemPoint(identityPublicKey, identityAlias, profileImage, contactInformation, countryName, provinceName, cityName, postalCode, streetName, houseNumber,
+                accuracy, frequency);
     }
 
     @Override
@@ -98,7 +100,9 @@ public class RedeemPointIdentitySubAppModuleManager extends ModuleManagerImpl<Re
                                String streetName,
                                String houseNumber) throws Exception {
 
-        redeemPointIdentityManager.createNewRedeemPoint(name, profile_img, contactInformation, countryName, provinceName, cityName, postalCode, streetName, houseNumber);
+        redeemPointIdentityManager.createNewRedeemPoint(name, profile_img, contactInformation, countryName, provinceName, cityName, postalCode, streetName, houseNumber,
+                redeemPointIdentityManager.getAccuracyDataDefault(),
+                redeemPointIdentityManager.getFrequencyDataDefault());
 
     }
 
@@ -115,7 +119,9 @@ public class RedeemPointIdentitySubAppModuleManager extends ModuleManagerImpl<Re
 
     @Override
     public void createIdentity(String name, String phrase, byte[] profile_img) throws Exception {
-        redeemPointIdentityManager.createNewRedeemPoint(name, profile_img);
+        redeemPointIdentityManager.createNewRedeemPoint(name, profile_img,
+                redeemPointIdentityManager.getAccuracyDataDefault(),
+                redeemPointIdentityManager.getFrequencyDataDefault());
     }
 
     @Override
@@ -127,4 +133,14 @@ public class RedeemPointIdentitySubAppModuleManager extends ModuleManagerImpl<Re
     public int[] getMenuNotifications() {
         return new int[0];
     }
+
+    @Override
+    public int getAccuracyDataDefault() {
+    return redeemPointIdentityManager.getAccuracyDataDefault();
+    }
+
+    @Override
+     public GeoFrequency getFrequencyDataDefault() {
+        return redeemPointIdentityManager.getFrequencyDataDefault();
+        }
 }

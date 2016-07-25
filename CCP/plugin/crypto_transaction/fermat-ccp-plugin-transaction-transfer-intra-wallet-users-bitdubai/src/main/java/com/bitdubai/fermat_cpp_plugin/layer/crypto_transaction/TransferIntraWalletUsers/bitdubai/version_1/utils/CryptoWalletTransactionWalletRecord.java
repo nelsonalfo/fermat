@@ -2,7 +2,9 @@ package com.bitdubai.fermat_cpp_plugin.layer.crypto_transaction.TransferIntraWal
 
 import com.bitdubai.fermat_api.layer.all_definition.enums.Actors;
 import com.bitdubai.fermat_api.layer.all_definition.enums.BlockchainNetworkType;
+import com.bitdubai.fermat_api.layer.all_definition.enums.CryptoCurrency;
 import com.bitdubai.fermat_api.layer.all_definition.money.CryptoAddress;
+import com.bitdubai.fermat_bch_api.layer.definition.crypto_fee.FeeOrigin;
 import com.bitdubai.fermat_ccp_api.layer.basic_wallet.crypto_wallet.interfaces.CryptoWalletTransactionRecord;
 
 import java.util.UUID;
@@ -23,6 +25,7 @@ public class CryptoWalletTransactionWalletRecord implements CryptoWalletTransact
     CryptoAddress AddressTo;
 
     long Amount;
+    long Total;
 
     long Timestamp;
 
@@ -40,6 +43,11 @@ public class CryptoWalletTransactionWalletRecord implements CryptoWalletTransact
 
     com.bitdubai.fermat_api.layer.all_definition.enums.BlockchainNetworkType BlockchainNetworkType;
 
+    CryptoCurrency cryptoCurrency;
+
+    private long fee ;
+    private FeeOrigin feeOrigin;
+
 
     public CryptoWalletTransactionWalletRecord(UUID transactionId,
                                                CryptoAddress addressFrom,
@@ -53,7 +61,11 @@ public class CryptoWalletTransactionWalletRecord implements CryptoWalletTransact
                                                String actorToPublicKey,
                                                Actors actorToType,
                                                Actors actorFromType,
-                                               com.bitdubai.fermat_api.layer.all_definition.enums.BlockchainNetworkType blockchainNetworkType) {
+                                               com.bitdubai.fermat_api.layer.all_definition.enums.BlockchainNetworkType blockchainNetworkType,
+                                               CryptoCurrency cryptoCurrency,
+                                               long fee,
+                                               FeeOrigin feeOrigin,
+                                               long Total) {
         TransactionId = transactionId;
         AddressFrom = addressFrom;
         RequestId = requestId;
@@ -67,6 +79,10 @@ public class CryptoWalletTransactionWalletRecord implements CryptoWalletTransact
         ActorToType = actorToType;
         ActorFromType = actorFromType;
         BlockchainNetworkType = blockchainNetworkType;
+        this.cryptoCurrency = cryptoCurrency;
+        this.fee = fee;
+        this.feeOrigin = feeOrigin;
+        this.Total = Total;
     }
 
     @Override
@@ -92,6 +108,11 @@ public class CryptoWalletTransactionWalletRecord implements CryptoWalletTransact
     @Override
     public long getAmount() {
         return Amount;
+    }
+
+    @Override
+    public long getTotal() {
+        return this.Total;
     }
 
     @Override
@@ -132,5 +153,20 @@ public class CryptoWalletTransactionWalletRecord implements CryptoWalletTransact
     @Override
     public BlockchainNetworkType getBlockchainNetworkType() {
         return BlockchainNetworkType;
+    }
+
+    @Override
+    public CryptoCurrency getCryptoCurrency() {
+        return this.cryptoCurrency;
+    }
+
+    @Override
+    public FeeOrigin getFeeOrigin() {
+        return this.feeOrigin;
+    }
+
+    @Override
+    public long getFee() {
+        return this.fee;
     }
 }

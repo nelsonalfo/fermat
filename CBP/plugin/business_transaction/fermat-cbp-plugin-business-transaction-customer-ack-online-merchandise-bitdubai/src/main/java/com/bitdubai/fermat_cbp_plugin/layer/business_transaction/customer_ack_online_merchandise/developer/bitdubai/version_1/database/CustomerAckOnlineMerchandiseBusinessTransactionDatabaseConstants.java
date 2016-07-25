@@ -4,7 +4,7 @@ package com.bitdubai.fermat_cbp_plugin.layer.business_transaction.customer_ack_o
  * The Class <code>com.bitdubai.fermat_cbp_plugin.layer.business_transaction.customer_online_payment.developer.bitdubai.version_1.database.CustomerAckOnlineMerchandiseBusinessTransactionDatabaseConstants</code>
  * keeps constants the column names of the database.<p/>
  * <p/>
- *
+ * <p/>
  * Created by Manuel Perez - (darkpriestrelative@gmail.com) on 23/12/15.
  *
  * @version 1.0
@@ -25,6 +25,7 @@ public class CustomerAckOnlineMerchandiseBusinessTransactionDatabaseConstants {
     public static final String ACK_ONLINE_MERCHANDISE_TRANSACTION_ID_COLUMN_NAME = "transaction_id";
     public static final String ACK_ONLINE_MERCHANDISE_TRANSACTION_HASH_COLUMN_NAME = "transaction_hash";
     public static final String ACK_ONLINE_MERCHANDISE_CRYPTO_STATUS_COLUMN_NAME = "crypto_status";
+    public static final String ACK_ONLINE_MERCHANDISE_CRYPTO_CURRENCY_COLUMN_NAME = "crypto_currency";
     public static final String ACK_ONLINE_MERCHANDISE_CONTRACT_TRANSACTION_STATUS_COLUMN_NAME = "contract_transaction_status";
     public static final String ACK_ONLINE_MERCHANDISE_TIMESTAMP_COLUMN_NAME = "timestamp";
     public static final String ACK_ONLINE_MERCHANDISE_CRYPTO_ADDRESS_COLUMN_NAME = "crypto_address";

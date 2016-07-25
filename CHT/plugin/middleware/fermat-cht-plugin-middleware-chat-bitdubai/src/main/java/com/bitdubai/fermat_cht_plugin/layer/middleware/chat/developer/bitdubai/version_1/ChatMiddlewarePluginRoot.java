@@ -33,7 +33,6 @@ import com.bitdubai.fermat_api.layer.osa_android.file_system.PluginFileSystem;
 import com.bitdubai.fermat_api.layer.osa_android.logger_system.LogLevel;
 import com.bitdubai.fermat_api.layer.osa_android.logger_system.LogManager;
 import com.bitdubai.fermat_cht_api.all_definition.events.enums.EventType;
-import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantGetCompatiblesActorNetworkServiceListException;
 import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantInitializeDatabaseException;
 import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantSetObjectException;
 import com.bitdubai.fermat_cht_api.all_definition.exceptions.CantStartServiceException;
@@ -54,10 +53,10 @@ import com.bitdubai.fermat_cht_plugin.layer.middleware.chat.developer.bitdubai.v
 import com.bitdubai.fermat_cht_plugin.layer.middleware.chat.developer.bitdubai.version_1.structure.ChatMiddlewareContactFactory;
 import com.bitdubai.fermat_cht_plugin.layer.middleware.chat.developer.bitdubai.version_1.structure.ChatMiddlewareManager;
 import com.bitdubai.fermat_cht_plugin.layer.middleware.chat.developer.bitdubai.version_1.structure.ChatMiddlewareMonitorAgent;
+import com.bitdubai.fermat_cht_plugin.layer.middleware.chat.developer.bitdubai.version_1.structure.ChatMiddlewareMonitorAgent2;
 import com.bitdubai.fermat_p2p_api.layer.p2p_communication.commons.exceptions.CantRequestListException;
 import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.error_manager.enums.UnexpectedPluginExceptionSeverity;
-import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.ErrorManager;
-import com.bitdubai.fermat_pip_api.layer.platform_service.event_manager.interfaces.EventManager;
+import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.EventManager;
 import com.bitdubai.fermat_pip_api.layer.user.device_user.interfaces.DeviceUserManager;
 
 import java.util.ArrayList;
@@ -65,6 +64,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 /**
@@ -120,6 +120,11 @@ public class ChatMiddlewarePluginRoot extends AbstractPlugin implements
     ChatMiddlewareContactFactory chatMiddlewareContactFactory;
 
     static Map<String, LogLevel> newLoggingLevel = new HashMap<String, LogLevel>();
+
+    //Agent configuration
+    private final long SLEEP_TIME = 5000;
+    private final long DELAY_TIME = 500;
+    private final TimeUnit TIME_UNIT = TimeUnit.MILLISECONDS;
 
     public ChatMiddlewarePluginRoot() {
         super(new PluginVersionReference(new Version()));
@@ -189,7 +194,7 @@ public class ChatMiddlewarePluginRoot extends AbstractPlugin implements
     public List<String> getClassesFullPath() {
         List<String> returnedClasses = new ArrayList<String>();
         try{
-            returnedClasses.add("com.bitdubai.fermat_cht_plugin.layer.middleware.chat.developer.bitdubai.version_1.ChatMiddlewarePluginRoot");
+            returnedClasses.add("ChatMiddlewarePluginRoot");
             return returnedClasses;
         } catch (Exception exception){
             reportError(UnexpectedPluginExceptionSeverity.NOT_IMPORTANT,
@@ -263,9 +268,7 @@ public class ChatMiddlewarePluginRoot extends AbstractPlugin implements
                             pluginDatabaseSystem,
                             pluginId);
             chatMiddlewareDeveloperDatabaseFactory.initializeDatabase();
-            //Initialize Contact Factory
-            //TODO:Eliminar
-            //initializeContactFactory();
+
             /**
              * Initialize manager
              */
@@ -283,7 +286,10 @@ public class ChatMiddlewarePluginRoot extends AbstractPlugin implements
             /**
              * Init monitor Agent
              */
-            ChatMiddlewareMonitorAgent openContractMonitorAgent=new ChatMiddlewareMonitorAgent(
+            ChatMiddlewareMonitorAgent2 openContractMonitorAgent=new ChatMiddlewareMonitorAgent2(
+                    SLEEP_TIME,
+                    TIME_UNIT,
+                    DELAY_TIME,
                     pluginDatabaseSystem,
                     logManager,
                     this,

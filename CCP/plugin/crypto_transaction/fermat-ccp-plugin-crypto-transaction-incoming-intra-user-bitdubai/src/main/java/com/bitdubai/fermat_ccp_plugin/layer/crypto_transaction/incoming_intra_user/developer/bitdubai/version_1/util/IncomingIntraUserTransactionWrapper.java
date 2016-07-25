@@ -2,7 +2,9 @@ package com.bitdubai.fermat_ccp_plugin.layer.crypto_transaction.incoming_intra_u
 
 import com.bitdubai.fermat_api.layer.all_definition.enums.Actors;
 import com.bitdubai.fermat_api.layer.all_definition.enums.BlockchainNetworkType;
+import com.bitdubai.fermat_api.layer.all_definition.enums.CryptoCurrency;
 import com.bitdubai.fermat_api.layer.all_definition.money.CryptoAddress;
+import com.bitdubai.fermat_bch_api.layer.definition.crypto_fee.FeeOrigin;
 import com.bitdubai.fermat_ccp_api.layer.basic_wallet.crypto_wallet.interfaces.CryptoWalletTransactionRecord;
 
 import java.util.UUID;
@@ -26,20 +28,26 @@ public class IncomingIntraUserTransactionWrapper implements CryptoWalletTransact
     private final long          timestamp         ;
     private final String        memo              ;
     private final BlockchainNetworkType blockchainNetworkType;
+    private final CryptoCurrency cryptoCurrency;
+    private final FeeOrigin feeOrigin;
+    private final long        fee;
+    private final long total;
 
-    public IncomingIntraUserTransactionWrapper(final UUID          transactionId     ,
-                                               final UUID          requestId     ,
-                                               final String        actorFromPublicKey,
-                                               final String        actorToPublicKey  ,
-                                               final Actors        actorFromType     ,
-                                               final Actors        actorToType       ,
-                                               final String        transactionHash   ,
-                                               final CryptoAddress addressFrom       ,
-                                               final CryptoAddress addressTo         ,
-                                               final long          amount            ,
-                                               final long          timestamp         ,
-                                               final String        memo              ,
-                                               final BlockchainNetworkType blockchainNetworkType) {
+    public IncomingIntraUserTransactionWrapper(final UUID transactionId,
+                                               final UUID requestId,
+                                               final String actorFromPublicKey,
+                                               final String actorToPublicKey,
+                                               final Actors actorFromType,
+                                               final Actors actorToType,
+                                               final String transactionHash,
+                                               final CryptoAddress addressFrom,
+                                               final CryptoAddress addressTo,
+                                               final long amount,
+                                               final long timestamp,
+                                               final String memo,
+                                               final BlockchainNetworkType blockchainNetworkType, CryptoCurrency cryptoCurrency,
+                                               FeeOrigin feeOrigin,
+                                               long fee, long total) {
 
         this.transactionId      = transactionId     ;
         this.requestId          = requestId         ;
@@ -54,6 +62,10 @@ public class IncomingIntraUserTransactionWrapper implements CryptoWalletTransact
         this.timestamp          = timestamp         ;
         this.memo               = memo              ;
         this.blockchainNetworkType = blockchainNetworkType;
+        this.cryptoCurrency = cryptoCurrency;
+        this.feeOrigin = feeOrigin;
+        this.fee = fee;
+        this.total = total;
     }
 
     @Override
@@ -107,6 +119,11 @@ public class IncomingIntraUserTransactionWrapper implements CryptoWalletTransact
     }
 
     @Override
+    public long getTotal() {
+        return this.total;
+    }
+
+    @Override
     public long getTimestamp() {
         return timestamp;
     }
@@ -118,6 +135,21 @@ public class IncomingIntraUserTransactionWrapper implements CryptoWalletTransact
 
     @Override
     public BlockchainNetworkType getBlockchainNetworkType() {return blockchainNetworkType;}
+
+    @Override
+    public CryptoCurrency getCryptoCurrency() {
+        return this.cryptoCurrency;
+    }
+
+    @Override
+    public FeeOrigin getFeeOrigin() {
+        return this.feeOrigin;
+    }
+
+    @Override
+    public long getFee() {
+        return this.fee;
+    }
 
 
 }

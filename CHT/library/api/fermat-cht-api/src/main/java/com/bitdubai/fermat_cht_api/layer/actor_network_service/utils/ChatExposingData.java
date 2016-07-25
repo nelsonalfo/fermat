@@ -1,5 +1,8 @@
 package com.bitdubai.fermat_cht_api.layer.actor_network_service.utils;
 
+import com.bitdubai.fermat_api.layer.osa_android.location_system.Location;
+import com.bitdubai.fermat_p2p_api.layer.all_definition.communication.commons.enums.ProfileStatus;
+
 import java.util.Arrays;
 
 /**
@@ -13,13 +16,24 @@ public class ChatExposingData {
     private final String country  ;
     private final String state    ;
     private final String city     ;
+    private final String status;
+    private final Location location;
+    private final long refreshInterval;
+    private final long accuracy;
+    private final ProfileStatus profileStatus;
+
 
     public ChatExposingData(final String publicKey,
                                     final String alias    ,
                                     final byte[] image,
                                     final String country,
                                     final String state,
-                                    final String city    ) {
+                                    final String city,
+                            final String status,
+                            final Location location,
+                            long refreshInterva,
+                            final long accuracy,
+                            final ProfileStatus profileStatus) {
 
         this.publicKey = publicKey;
         this.alias     = alias    ;
@@ -27,6 +41,11 @@ public class ChatExposingData {
         this.country   = country;
         this.state     = state;
         this.city      = city;
+        this.status = status;
+        this.location = location;
+        this.refreshInterval = refreshInterva;
+        this.accuracy = accuracy;
+        this.profileStatus = profileStatus;
     }
 
     /**
@@ -62,9 +81,29 @@ public class ChatExposingData {
         return this.city;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public long getRefreshInterval() {
+        return refreshInterval;
+    }
+
+    public long getAccurancy() {
+        return accuracy;
+    }
+
+    public ProfileStatus getStatusConnected() {
+        return this.profileStatus;
+    }
+
     @Override
     public String toString() {
-        return "CryptoBrokerExposingData{" +
+        return "ChatExposingData{" +
                 "publicKey='" + publicKey + '\'' +
                 ", alias='" + alias + '\'' +
                 ", image=" + Arrays.toString(image) +

@@ -11,7 +11,6 @@ import com.bitdubai.android_fermat_ccp_wallet_bitcoin.R;
 import com.bitdubai.fermat_android_api.layer.definition.wallet.utils.ImagesUtils;
 import com.bitdubai.fermat_android_api.ui.adapters.FermatAdapter;
 import com.bitdubai.fermat_android_api.ui.transformation.CircleTransform;
-import com.bitdubai.fermat_android_api.ui.util.FermatAnimationsUtils;
 import com.bitdubai.fermat_ccp_api.layer.wallet_module.crypto_wallet.interfaces.CryptoWalletIntraUserActor;
 import com.bitdubai.reference_niche_wallet.bitcoin_wallet.common.holders.IntraUserInfoViewHolder;
 import com.bitdubai.reference_niche_wallet.bitcoin_wallet.common.utils.AddConnectionCallback;
@@ -78,7 +77,7 @@ public class AddConnectionsAdapter extends FermatAdapter<CryptoWalletIntraUserAc
                 if (selected) {
                     holder.checkbox_connection.setChecked(true);
                     //FermatAnimationsUtils.showEmpty(context, true, holder.checkbox_connection);
-                    addConnectionCallback.addMenuEnabled();
+                    //addConnectionCallback.addMenuEnabled();
                     holder.container_data.setBackgroundColor(Color.parseColor("#666666"));
                     holder.container_data.getBackground().setAlpha(50);
 
@@ -108,14 +107,14 @@ public class AddConnectionsAdapter extends FermatAdapter<CryptoWalletIntraUserAc
                 if (selected) {
                     holder.checkbox_connection.setChecked(true);
                    // FermatAnimationsUtils.showEmpty(context, true, holder.checkbox_connection);
-                    addConnectionCallback.addMenuEnabled();
+                  //  addConnectionCallback.addMenuEnabled();
                     holder.container_data.setBackgroundColor(Color.parseColor("#666666"));
                     holder.container_data.getBackground().setAlpha(50);
 
                 } else {
                     holder.checkbox_connection.setChecked(false);
                    // FermatAnimationsUtils.showEmpty(context, false, holder.checkbox_connection);
-                    addConnectionCallback.addMenuDisabled();
+                   // addConnectionCallback.addMenuDisabled();
                     holder.container_data.getBackground().setAlpha(0);
                 }
             }

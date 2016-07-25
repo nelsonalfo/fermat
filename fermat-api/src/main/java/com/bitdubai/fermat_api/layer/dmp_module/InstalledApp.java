@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by mati on 2016.03.09..
  */
-public class InstalledApp implements com.bitdubai.fermat_api.layer.dmp_module.wallet_manager.InstalledApp,FermatApp, Serializable{
+public class InstalledApp implements com.bitdubai.fermat_api.layer.dmp_module.wallet_manager.InstalledApp, FermatApp, Serializable {
 
     private List<InstalledSkin> skinsId;
     private List<InstalledLanguage> languajesId;
@@ -28,8 +28,9 @@ public class InstalledApp implements com.bitdubai.fermat_api.layer.dmp_module.wa
     private AppsStatus appsStatus;
     private int bannerRes;
     private Platforms platform;
+//    private AppStructureType appStructureType = AppStructureType.REFERENCE;
 
-    public InstalledApp(String name, String publicKey, Version version, int iconResource, int position, int notifications,AppsStatus appsStatus,Platforms platform) {
+    public InstalledApp(String name, String publicKey, Version version, int iconResource, int position, int notifications, AppsStatus appsStatus, Platforms platform) {
         this.name = name;
         this.publicKey = publicKey;
         this.version = version;
@@ -39,6 +40,10 @@ public class InstalledApp implements com.bitdubai.fermat_api.layer.dmp_module.wa
         this.appsStatus = appsStatus;
         this.platform = platform;
     }
+
+//    public void setAppStructureType(AppStructureType appStructureType) {
+//        this.appStructureType = appStructureType;
+//    }
 
     @Override
     public List<InstalledLanguage> getLanguagesId() {
@@ -124,6 +129,11 @@ public class InstalledApp implements com.bitdubai.fermat_api.layer.dmp_module.wa
     public FermatAppType getAppType() {
         return FermatAppType.P2P_APP;
     }
+//
+//    @Override
+//    public AppStructureType getAppStructureType() {
+//        return appStructureType;
+//    }
 
     @Override
     public byte[] getAppIcon() {

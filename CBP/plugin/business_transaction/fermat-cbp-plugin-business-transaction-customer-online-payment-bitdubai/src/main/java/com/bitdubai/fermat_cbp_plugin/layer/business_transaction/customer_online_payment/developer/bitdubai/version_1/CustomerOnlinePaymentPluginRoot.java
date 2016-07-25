@@ -6,6 +6,7 @@ import com.bitdubai.fermat_api.FermatException;
 import com.bitdubai.fermat_api.layer.all_definition.common.system.abstract_classes.AbstractPlugin;
 import com.bitdubai.fermat_api.layer.all_definition.common.system.annotations.NeededAddonReference;
 import com.bitdubai.fermat_api.layer.all_definition.common.system.annotations.NeededPluginReference;
+import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.EventManager;
 import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.FermatManager;
 import com.bitdubai.fermat_api.layer.all_definition.common.system.interfaces.error_manager.enums.UnexpectedPluginExceptionSeverity;
 import com.bitdubai.fermat_api.layer.all_definition.common.system.utils.PluginVersionReference;
@@ -35,6 +36,7 @@ import com.bitdubai.fermat_cbp_api.all_definition.exceptions.CantStartServiceExc
 import com.bitdubai.fermat_cbp_api.layer.contract.customer_broker_purchase.interfaces.CustomerBrokerContractPurchaseManager;
 import com.bitdubai.fermat_cbp_api.layer.contract.customer_broker_sale.interfaces.CustomerBrokerContractSaleManager;
 import com.bitdubai.fermat_cbp_api.layer.negotiation.customer_broker_purchase.interfaces.CustomerBrokerPurchaseNegotiationManager;
+import com.bitdubai.fermat_cbp_api.layer.negotiation.customer_broker_sale.interfaces.CustomerBrokerSaleNegotiationManager;
 import com.bitdubai.fermat_cbp_api.layer.network_service.transaction_transmission.interfaces.TransactionTransmissionManager;
 import com.bitdubai.fermat_cbp_plugin.layer.business_transaction.customer_online_payment.developer.bitdubai.version_1.database.CustomerOnlinePaymentBusinessTransactionDao;
 import com.bitdubai.fermat_cbp_plugin.layer.business_transaction.customer_online_payment.developer.bitdubai.version_1.database.CustomerOnlinePaymentBusinessTransactionDatabaseConstants;
@@ -42,16 +44,16 @@ import com.bitdubai.fermat_cbp_plugin.layer.business_transaction.customer_online
 import com.bitdubai.fermat_cbp_plugin.layer.business_transaction.customer_online_payment.developer.bitdubai.version_1.database.CustomerOnlinePaymentBusinessTransactionDeveloperDatabaseFactory;
 import com.bitdubai.fermat_cbp_plugin.layer.business_transaction.customer_online_payment.developer.bitdubai.version_1.event_handler.CustomerOnlinePaymentRecorderService;
 import com.bitdubai.fermat_cbp_plugin.layer.business_transaction.customer_online_payment.developer.bitdubai.version_1.exceptions.CantInitializeCustomerOnlinePaymentBusinessTransactionDatabaseException;
-import com.bitdubai.fermat_cbp_plugin.layer.business_transaction.customer_online_payment.developer.bitdubai.version_1.structure.CustomerOnlinePaymentMonitorAgent;
+import com.bitdubai.fermat_cbp_plugin.layer.business_transaction.customer_online_payment.developer.bitdubai.version_1.structure.CustomerOnlinePaymentMonitorAgent2;
 import com.bitdubai.fermat_cbp_plugin.layer.business_transaction.customer_online_payment.developer.bitdubai.version_1.structure.CustomerOnlinePaymentTransactionManager;
 import com.bitdubai.fermat_ccp_api.layer.crypto_transaction.outgoing_intra_actor.interfaces.OutgoingIntraActorManager;
 import com.bitdubai.fermat_ccp_api.layer.identity.intra_user.interfaces.IntraWalletUserIdentityManager;
-import com.bitdubai.fermat_pip_api.layer.platform_service.event_manager.interfaces.EventManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 
@@ -87,6 +89,9 @@ public class CustomerOnlinePaymentPluginRoot extends AbstractPlugin implements
     @NeededPluginReference(platform = Platforms.CRYPTO_BROKER_PLATFORM, layer = Layers.NEGOTIATION, plugin = Plugins.NEGOTIATION_PURCHASE)
     private CustomerBrokerPurchaseNegotiationManager customerBrokerPurchaseNegotiationManager;
 
+    @NeededPluginReference(platform = Platforms.CRYPTO_BROKER_PLATFORM, layer = Layers.NEGOTIATION, plugin = Plugins.NEGOTIATION_SALE)
+    private CustomerBrokerSaleNegotiationManager customerBrokerSaleNegotiationManager;
+
     @NeededPluginReference(platform = Platforms.CRYPTO_CURRENCY_PLATFORM, layer = Layers.IDENTITY, plugin = Plugins.INTRA_WALLET_USER)
     private IntraWalletUserIdentityManager intraWalletUserIdentityManager;
 
@@ -105,6 +110,16 @@ public class CustomerOnlinePaymentPluginRoot extends AbstractPlugin implements
      */
     Database database;
 
+    /**
+     * Represents the plugin processor agent
+     */
+    CustomerOnlinePaymentMonitorAgent2 processorAgent;
+
+    //Agent configuration
+    private final long SLEEP_TIME = 10000;
+    private final long DELAY_TIME = 1000;
+    private final TimeUnit TIME_UNIT = TimeUnit.MILLISECONDS;
+
     static Map<String, LogLevel> newLoggingLevel = new HashMap<String, LogLevel>();
 
     public CustomerOnlinePaymentPluginRoot() {
@@ -114,7 +129,8 @@ public class CustomerOnlinePaymentPluginRoot extends AbstractPlugin implements
     @Override
     public List<String> getClassesFullPath() {
         List<String> returnedClasses = new ArrayList<String>();
-        returnedClasses.add("com.bitdubai.fermat_cbp_plugin.layer.business_transaction.customer_online_payment.developer.bitdubai.version_1.CustomerOnlinePaymentPluginRoot");
+        returnedClasses.add("CustomerOnlinePaymentPluginRoot");
+
         return returnedClasses;
     }
 
@@ -221,7 +237,6 @@ public class CustomerOnlinePaymentPluginRoot extends AbstractPlugin implements
             this.customerOnlinePaymentTransactionManager = new CustomerOnlinePaymentTransactionManager(
                     customerBrokerContractPurchaseManager,
                     dao,
-                    transactionTransmissionManager,
                     customerBrokerPurchaseNegotiationManager,
                     this);
 
@@ -234,7 +249,7 @@ public class CustomerOnlinePaymentPluginRoot extends AbstractPlugin implements
             /**
              * Init monitor Agent
              */
-            CustomerOnlinePaymentMonitorAgent monitorAgent = new CustomerOnlinePaymentMonitorAgent(
+            /*CustomerOnlinePaymentMonitorAgent monitorAgent = new CustomerOnlinePaymentMonitorAgent(
                     pluginDatabaseSystem,
                     logManager,
                     this,
@@ -244,9 +259,27 @@ public class CustomerOnlinePaymentPluginRoot extends AbstractPlugin implements
                     customerBrokerContractPurchaseManager,
                     customerBrokerContractSaleManager,
                     outgoingIntraActorManager,
-                    intraWalletUserIdentityManager);
+                    intraWalletUserIdentityManager,
+                    customerBrokerSaleNegotiationManager);
 
-            monitorAgent.start();
+            monitorAgent.start();*/
+
+            //New Agent starting
+            processorAgent = new CustomerOnlinePaymentMonitorAgent2(
+                    SLEEP_TIME,
+                    TIME_UNIT,
+                    DELAY_TIME,
+                    this,
+                    eventManager,
+                    dao,
+                    transactionTransmissionManager,
+                    customerBrokerContractPurchaseManager,
+                    customerBrokerContractSaleManager,
+                    customerBrokerSaleNegotiationManager,
+                    outgoingIntraActorManager,
+                    intraWalletUserIdentityManager
+            );
+            processorAgent.start();
 
             this.serviceStatus = ServiceStatus.STARTED;
             //System.out.println("Customer online payment starting");
@@ -330,6 +363,7 @@ public class CustomerOnlinePaymentPluginRoot extends AbstractPlugin implements
     @Override
     public void stop() {
         try {
+            processorAgent.stop();
             this.serviceStatus = ServiceStatus.STOPPED;
         } catch (Exception exception) {
             this.reportError(UnexpectedPluginExceptionSeverity.DISABLES_SOME_FUNCTIONALITY_WITHIN_THIS_PLUGIN, FermatException.wrapException(exception));
@@ -374,15 +408,16 @@ public class CustomerOnlinePaymentPluginRoot extends AbstractPlugin implements
         return customerOnlinePaymentBusinessTransactionDeveloperDatabaseFactory.getDatabaseTableContent(developerObjectFactory, developerDatabaseTable);
     }
 
-    private void testPayment() {
+    /*private void testPayment() {
         try {
             this.customerOnlinePaymentTransactionManager.sendPayment(
                     "testWalletPublicKey",
-                    "888052D7D718420BD197B647F3BB04128C9B71BC99DBB7BC60E78BDAC4DFC6E2");
+                    "888052D7D718420BD197B647F3BB04128C9B71BC99DBB7BC60E78BDAC4DFC6E2",
+                    CryptoCurrency.BITCOIN);
         } catch (Exception e) {
             System.out.println("Exception in Customer Online Payment: " + e.getMessage());
             e.printStackTrace();
         }
-    }
+    }*/
 
 }
